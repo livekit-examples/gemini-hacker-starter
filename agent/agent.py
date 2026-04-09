@@ -6,8 +6,17 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types as genai_types
 from livekit import agents, rtc
-from livekit.agents import AgentServer, AgentSession, Agent, RunContext, function_tool, room_io
+from livekit.agents import (
+    Agent,
+    AgentServer,
+    AgentSession,
+    RunContext,
+    TurnHandlingOptions,
+    function_tool,
+    inference,
+)
 from livekit.plugins import google
+from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 load_dotenv(".env.local")
 
@@ -272,6 +281,16 @@ async def entrypoint(ctx: agents.JobContext):
         llm=google.realtime.RealtimeModel(
             model=REALTIME_MODEL,
             voice="Aoede",
+        ),
+        # Use LiveKit's context-aware turn detector for improved human pause handling.
+        stt=inference.STT(language="multi"),
+        turn_handling=TurnHandlingOptions(
+            turn_detection=MultilingualModel(),
+            endpointing={
+                "mode": "dynamic",
+                "min_delay": 0.4,
+                "max_delay": 2.8,
+            },
         ),
     )
 

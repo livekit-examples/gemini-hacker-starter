@@ -34,7 +34,13 @@ lk app env -w
 
 ## Running the Agent
 
-### Using uv
+Before first run (one-time), download model assets used by LiveKit plugins:
+
+```bash
+uv run agent.py download-files
+```
+
+### Start with uv
 
 ```bash
 uv run python agent.py dev

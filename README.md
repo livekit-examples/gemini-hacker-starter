@@ -183,7 +183,7 @@ from livekit.agents import voice
 
 session = AgentSession(
     llm=google.realtime.RealtimeModel(...),
-    video_sampler=voice.VoiceActivityVideoSampler(speaking_fps=1.0, silent_fps=1.0),
+    video_sampler=voice.VoiceActivityVideoSampler(speaking_fps=1.0, silent_fps=1.0)
 )
 ```
 
