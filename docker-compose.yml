@@ -1,0 +1,16 @@
+services:
+  agent:
+    build:
+      context: ./agent
+    env_file:
+      - ./agent/.env.local
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./frontend/.env.local
+    restart: unless-stopped

@@ -30,7 +30,7 @@ export function GeneratedImagesProvider({ children }: { children: React.ReactNod
       try {
         const chunks = await reader.readAll();
         const mimeType = reader.info.mimeType || 'image/png';
-        const blob = new Blob(chunks, { type: mimeType });
+        const blob = new Blob(chunks as unknown as BlobPart[], { type: mimeType });
         const imageUrl = URL.createObjectURL(blob);
 
         const image: GeneratedImage = {
