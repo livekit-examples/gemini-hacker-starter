@@ -24,6 +24,7 @@ Then edit `.env.local` with your credentials:
 - `LIVEKIT_API_SECRET` - Your LiveKit API secret
 - `LIVEKIT_URL` - Your LiveKit server URL (e.g., `wss://your-project.livekit.cloud`)
 - `GOOGLE_API_KEY` - Your Google/Gemini API key
+- `REALTIME_MODEL` (optional) - Gemini Live model override. If omitted, the agent uses `gemini-2.5-flash-native-audio-latest`.
 
 Or use the LiveKit CLI to auto-populate:
 

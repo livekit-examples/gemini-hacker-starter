@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 # HACK HERE: swap model IDs to experiment
 # ─────────────────────────────────────────────
-REALTIME_MODEL = "gemini-3.1-flash-audio-eap"
+# Use a model that's broadly available for Gemini Live via API keys.
+REALTIME_MODEL = os.getenv("REALTIME_MODEL", "gemini-2.5-flash-native-audio-latest")
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"  # NanoBanana 2
 LYRIA_MODEL = "models/lyria-realtime-exp"
 

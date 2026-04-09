@@ -240,6 +240,7 @@ export function AgentControlBar({
   const { send } = useChat();
   const publishPermissions = usePublishPermissions();
   const [isChatOpenUncontrolled, setIsChatOpenUncontrolled] = useState(isChatOpen);
+  const microphoneAutoEnableAttemptedRef = useRef(false);
   const {
     micTrackRef,
     cameraToggle,
@@ -262,6 +263,27 @@ export function AgentControlBar({
     camera: controls?.camera ?? publishPermissions.camera,
     chat: controls?.chat ?? publishPermissions.data,
   };
+
+  useEffect(() => {
+    if (!isConnected) {
+      microphoneAutoEnableAttemptedRef.current = false;
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
+    if (!isConnected || !visibleControls.microphone) return;
+    if (microphoneToggle.enabled || microphoneToggle.pending) return;
+    if (microphoneAutoEnableAttemptedRef.current) return;
+
+    microphoneAutoEnableAttemptedRef.current = true;
+    void microphoneToggle.toggle(true);
+  }, [
+    isConnected,
+    visibleControls.microphone,
+    microphoneToggle.enabled,
+    microphoneToggle.pending,
+    microphoneToggle.toggle,
+  ]);
 
   const isEmpty = Object.values(visibleControls).every((value) => !value);
 
