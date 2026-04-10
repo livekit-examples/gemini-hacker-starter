@@ -15,6 +15,7 @@ const ALLOWED_REALTIME_VOICES = new Set(['Aoede', 'Kore', 'Puck', 'Charon', 'Fen
 const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL;
+const DEFAULT_AGENT_NAME = process.env.AGENT_NAME;
 
 // don't cache the results
 export const revalidate = 0;
@@ -31,9 +32,9 @@ export async function POST(req: Request) {
       throw new Error('LIVEKIT_API_SECRET is not defined');
     }
 
-    // Parse agent configuration from request body
-    const body = await req.json();
-    const agentName: string = body?.room_config?.agents?.[0]?.agent_name;
+    // Parse agent configuration from request body, falling back to AGENT_NAME env var
+    const body = await req.json().catch(() => ({}));
+    const agentName: string = body?.room_config?.agents?.[0]?.agent_name ?? DEFAULT_AGENT_NAME;
     const requestedVoice = parseRequestedVoice(body?.voice);
 
     // Generate participant token
