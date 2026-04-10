@@ -3,11 +3,11 @@ services:
     build:
       context: ./agent
     environment:
-      LIVEKIT_URL: ${LIVEKIT_URL:-wss://your-project.livekit.cloud}
-      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-your_livekit_api_key}
-      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-your_livekit_api_secret}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-your_google_api_key}
-      REALTIME_MODEL: ${REALTIME_MODEL:-gemini-2.5-flash-native-audio-latest}
+      LIVEKIT_URL: ${LIVEKIT_URL:?LIVEKIT_URL is required}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?LIVEKIT_API_KEY is required}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?LIVEKIT_API_SECRET is required}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:?GOOGLE_API_KEY is required}
+      REALTIME_MODEL: ${REALTIME_MODEL:-gemini-3.1-flash-live-preview}
       REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
     restart: unless-stopped
 
@@ -16,13 +16,13 @@ services:
       context: ./frontend
     environment:
       NODE_ENV: production
-      LIVEKIT_URL: ${LIVEKIT_URL:-wss://your-project.livekit.cloud}
-      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-your_livekit_api_key}
-      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-your_livekit_api_secret}
+      LIVEKIT_URL: ${LIVEKIT_URL:?LIVEKIT_URL is required}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?LIVEKIT_API_KEY is required}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?LIVEKIT_API_SECRET is required}
       AGENT_NAME: ${AGENT_NAME:-gemini-hackathon-agent}
       SANDBOX_ID: ${SANDBOX_ID:-}
       NEXT_PUBLIC_APP_CONFIG_ENDPOINT: ${NEXT_PUBLIC_APP_CONFIG_ENDPOINT:-}
-      NEXT_PUBLIC_CONN_DETAILS_ENDPOINT: ${NEXT_PUBLIC_CONN_DETAILS_ENDPOINT:-}
+      NEXT_PUBLIC_CONN_DETAILS_ENDPOINT: ${NEXT_PUBLIC_CONN_DETAILS_ENDPOINT:-/api/connection-details}
       PORT: ${FRONTEND_PORT:-3006}
       HOSTNAME: 0.0.0.0
     ports:
