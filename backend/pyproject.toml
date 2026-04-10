@@ -8,6 +8,8 @@ dependencies = [
     "uvicorn[standard]>=0.34",
     "pydantic-settings>=2.7",
     "httpx>=0.28",
+    "livekit-agents[google,images,turn-detector]~=1.4",
+    "google-genai>=1.16.0",
 ]
 
 [project.optional-dependencies]

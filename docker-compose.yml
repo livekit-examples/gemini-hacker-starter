@@ -1,16 +1,4 @@
 services:
-  agent:
-    build:
-      context: ./agent
-    environment:
-      LIVEKIT_URL: ${LIVEKIT_URL:?LIVEKIT_URL is required}
-      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?LIVEKIT_API_KEY is required}
-      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?LIVEKIT_API_SECRET is required}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:?GOOGLE_API_KEY is required}
-      REALTIME_MODEL: ${REALTIME_MODEL:-gemini-3.1-flash-live-preview}
-      REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend

@@ -232,6 +232,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 1 — FastAPI Skeleton
 
+**Status:** `[x] Complete`
+
 **Goal:** A working FastAPI service with all four routes, Pydantic models, and environment config. The frontend can already point to it.
 
 **Scope:**
@@ -259,6 +261,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 2 — Agent Encapsulation
 
+**Status:** `[x] Complete`
+
 **Goal:** The LiveKit agent runs inside the FastAPI process. The standalone `agent/` Docker service is retired.
 
 **Scope:**
@@ -278,6 +282,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 ---
 
 ### SESSION 3 — Agent Class Hierarchy
+
+**Status:** `[ ] Not started`
 
 **Goal:** The class hierarchy skeleton is in place. `HackathonAgent` is migrated into it. Adding a new industry agent requires only subclassing + one registry line.
 
@@ -314,6 +320,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 4 — Demo Config System
 
+**Status:** `[ ] Not started`
+
 **Goal:** The backend has a full `DemoConfig` per industry. `/api/config` and `/api/demos` return real structured data. The frontend is fully config-driven.
 
 **Scope:**
@@ -345,6 +353,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 5 — Strip LiveKit Branding + Tailwind Setup
 
+**Status:** `[ ] Not started`
+
 **Goal:** Zero LiveKit branding in the frontend. EXODIA color and font tokens installed and working.
 
 **Scope:**
@@ -369,6 +379,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 ---
 
 ### SESSION 6 — Design System Atoms
+
+**Status:** `[ ] Not started`
 
 **Goal:** All reusable UI primitives exist and match the style guide exactly. Every other session uses these — nothing is rebuilt from scratch.
 
@@ -396,6 +408,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 7 — ExodiaNav + Root Layout
 
+**Status:** `[ ] Not started`
+
 **Goal:** The navigation pill and root layout are production-ready and match the style guide.
 
 **Scope:**
@@ -421,6 +435,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 ---
 
 ### SESSION 8 — Landing Page
+
+**Status:** `[ ] Not started`
 
 **Goal:** A polished landing page with GSAP-animated hero and all 5 industry demo cards wired to the backend.
 
@@ -456,6 +472,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 9 — Dashboard Layout + Core Panels
 
+**Status:** `[ ] Not started`
+
 **Goal:** The three-panel dashboard shell exists and is wired to a live agent session. Transcript and tool output panels update in real time.
 
 **Scope:**
@@ -487,6 +505,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 ---
 
 ### SESSION 10 — Language Profiles + Backend Detector
+
+**Status:** `[ ] Not started`
 
 **Goal:** All 4 language profiles are written and tested. The agent can detect and apply the correct one from participant metadata.
 
@@ -528,6 +548,8 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 11 — Language Selector + RTL Frontend
 
+**Status:** `[ ] Not started`
+
 **Goal:** The user can select a language before connecting. Arabic demos render RTL correctly.
 
 **Scope:**
@@ -558,6 +580,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 12 — Sales: Agent + Tools
 
+**Status:** `[ ] Not started`
+
 **Persona:** Aria, Senior Sales Strategist. Confident, direct, commercially sharp.
 
 **Scope:**
@@ -584,6 +608,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 13 — Sales: Frontend Panel
 
+**Status:** `[ ] Not started`
+
 **Scope:**
 - `components/dashboard/panels/SalesPanel.tsx` — renders talking points from `ToolOutputPanel` as a prioritised list; priority badge (red/amber/green `Tag`); bullet points in `font-sans text-sm text-ghost/70`
 - `PersonaCard` for Aria: initials `"AR"`, role tag "Sales Strategist"
@@ -602,6 +628,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 14 — Manufacturing: Agent + Tools + SOP Data
+
+**Status:** `[ ] Not started`
 
 **Persona:** Marco, Process & Quality Engineer. Methodical, precise, no-nonsense.
 
@@ -630,6 +658,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 15 — Manufacturing: Frontend Panel
 
+**Status:** `[ ] Not started`
+
 **Scope:**
 - `components/dashboard/panels/ManufacturingPanel.tsx` — defect report card: defect type header, severity badge (colour-coded Tag), recommended action; SOP result card: procedure title, numbered steps list
 - `PersonaCard` for Marco: initials `"MA"`, role tag "Process & Quality Engineer"
@@ -646,6 +676,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 16 — Logistics: Agent + Tools + Seeded Data
+
+**Status:** `[ ] Not started`
 
 **Persona:** Elena, Head of Logistics Operations. Sharp, fast, operationally focused.
 
@@ -669,6 +701,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 17 — Logistics: Frontend Panel
 
+**Status:** `[ ] Not started`
+
 **Scope:**
 - `components/dashboard/panels/LogisticsPanel.tsx` — shipment card: tracking ID in `font-mono`, status badge, ETA; delay flag card: warning icon, reason, timestamp; carrier brief card: on-time rate, incidents count
 - `PersonaCard` for Elena: initials `"EL"`, role tag "Head of Logistics Operations"
@@ -685,6 +719,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 18 — Real Estate: Agent + Tools + Seeded Data
+
+**Status:** `[ ] Not started`
 
 **Persona:** Sofia, Senior Property Advisor. Elegant, knowledgeable, client-centric.
 
@@ -708,6 +744,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 19 — Real Estate: Frontend Panel
 
+**Status:** `[ ] Not started`
+
 **Scope:**
 - `components/dashboard/panels/RealEstatePanel.tsx` — CMA card: comparables table (address, price, sqm, date), price range summary; property analysis card: observations list, issues with severity badges, adjustment estimate
 - Buyer profile card: formatted profile text with section headers
@@ -725,6 +763,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 20 — Dental: Agent + Tools + Seeded Data
+
+**Status:** `[ ] Not started`
 
 **Persona:** Dr. Nour, Specialist in Restorative Dentistry. Calm, reassuring, precise.
 
@@ -758,6 +798,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 21 — Dental: Frontend Panel + Disclaimer
 
+**Status:** `[ ] Not started`
+
 **Scope:**
 - `components/dashboard/panels/DentalPanel.tsx`:
   - Image analysis card: area, clinical term in `font-mono`, lay term in `font-sans`, urgency badge (red/amber/green)
@@ -785,6 +827,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 22 — Demo Switching + Persona Transitions
 
+**Status:** `[ ] Not started`
+
 **Goal:** Industry switching happens without a full page reload. Transition feels smooth and intentional.
 
 **Scope:**
@@ -807,6 +851,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 23 — Landing Page Polish + GSAP
+
+**Status:** `[ ] Not started`
 
 **Goal:** The landing page is visually compelling enough to open a sales conversation.
 
@@ -831,6 +877,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 ---
 
 ### SESSION 24 — Production Hardening
+
+**Status:** `[ ] Not started`
 
 **Goal:** Demo-safe. Won't crash, won't leak, won't embarrass in front of a customer.
 
@@ -857,29 +905,31 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ## Session Summary
 
-| # | Session | Phase | Key Deliverable |
-|---|---|---|---|
-| 1 | FastAPI Skeleton | Foundation | 4 routes, Pydantic models, Docker |
-| 2 | Agent Encapsulation | Foundation | Agent inside FastAPI, standalone service retired |
-| 3 | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
-| 4 | Demo Config System | Foundation | DemoConfig for all 5 industries |
-| 5 | Strip LiveKit + Tailwind | Design | EXODIA tokens, fonts, no LiveKit brand |
-| 6 | Design System Atoms | Design | Button, Card, Tag, StatusDot, Avatar, etc. |
-| 7 | ExodiaNav + Root Layout | Design | Nav pill, footer, layout shell |
-| 8 | Landing Page | Design | Hero + 5 DemoCards wired to backend |
-| 9 | Dashboard Layout | Design | 3-panel shell, Transcript, ToolOutput, Controls |
-| 10 | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
-| 11 | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
-| 12 | Sales: Backend | Sales | SalesAgent, 3 tools |
-| 13 | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
-| 14 | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
-| 15 | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
-| 16 | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
-| 17 | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
-| 18 | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |
-| 19 | Real Estate: Frontend | Real Estate | CMApanel, Sofia PersonaCard |
-| 20 | Dental: Backend | Dental | DentalAgent, multilingual aftercare, disclaimer |
-| 21 | Dental: Frontend | Dental | DentalPanel, disclaimer banner, Dr. Nour card |
-| 22 | Demo Switching | Polish | Persona transitions, nav active state |
-| 23 | Landing Polish + GSAP | Polish | Animations, mobile, meta tags |
-| 24 | Production Hardening | Production | Rate limiting, secrets audit, load test |
+> **Agent instruction:** After completing any session, update the status column below — change `[ ]` to `[x]` for that session. Before starting a new session, scan this table to confirm which sessions are already done so you never re-implement completed work.
+
+| # | Done | Session | Phase | Key Deliverable |
+| --- | --- | --- | --- | --- |
+| 1 | [x] | FastAPI Skeleton | Foundation | 4 routes, Pydantic models, Docker |
+| 2 | [x] | Agent Encapsulation | Foundation | Agent inside FastAPI, standalone service retired |
+| 3 | [ ] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
+| 4 | [ ] | Demo Config System | Foundation | DemoConfig for all 5 industries |
+| 5 | [ ] | Strip LiveKit + Tailwind | Design | EXODIA tokens, fonts, no LiveKit brand |
+| 6 | [ ] | Design System Atoms | Design | Button, Card, Tag, StatusDot, Avatar, etc. |
+| 7 | [ ] | ExodiaNav + Root Layout | Design | Nav pill, footer, layout shell |
+| 8 | [ ] | Landing Page | Design | Hero + 5 DemoCards wired to backend |
+| 9 | [ ] | Dashboard Layout | Design | 3-panel shell, Transcript, ToolOutput, Controls |
+| 10 | [ ] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
+| 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
+| 12 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |
+| 13 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
+| 14 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
+| 15 | [ ] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
+| 16 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
+| 17 | [ ] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
+| 18 | [ ] | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |
+| 19 | [ ] | Real Estate: Frontend | Real Estate | CMApanel, Sofia PersonaCard |
+| 20 | [ ] | Dental: Backend | Dental | DentalAgent, multilingual aftercare, disclaimer |
+| 21 | [ ] | Dental: Frontend | Dental | DentalPanel, disclaimer banner, Dr. Nour card |
+| 22 | [ ] | Demo Switching | Polish | Persona transitions, nav active state |
+| 23 | [ ] | Landing Polish + GSAP | Polish | Animations, mobile, meta tags |
+| 24 | [ ] | Production Hardening | Production | Rate limiting, secrets audit, load test |
