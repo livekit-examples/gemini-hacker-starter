@@ -292,7 +292,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 3 — Agent Class Hierarchy
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** The class hierarchy skeleton is in place. `HackathonAgent` is migrated into it. Adding a new industry agent requires only subclassing + one registry line.
 
@@ -1054,7 +1054,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | **5** | **7** | **[x]** | **ExodiaNav + Root Layout** | **Design** | **Nav pill, footer, layout shell** |
 | **6** | **8** | **[x]** | **Landing Page** | **Design** | **Hero + 6 DemoCards wired to backend** |
 | **7** | **9** | **[x]** | **Dashboard Layout** | **Design** | **3-panel shell, Transcript, ToolOutput, Controls** |
-| 8 | 3 | [ ] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
+| 8 | 3 | [x] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
 | 9 | 4 | [ ] | Demo Config System | Foundation | DemoConfig for all 6 industries, replaces Session 8 stubs |
 | 10 | 10 | [ ] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
 | 11 | 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |

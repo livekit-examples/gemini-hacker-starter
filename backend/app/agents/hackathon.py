@@ -1,3 +1,10 @@
+"""HackathonAgent — multimodal demo persona for the EXODIA hackathon demo.
+
+Capabilities: image generation (NanoBanana 2 / Gemini), real-time music
+streaming (Lyria RealTime), and full video/camera awareness.
+
+Registered in the agent registry under the slug ``"hackathon"``.
+"""
 import asyncio
 import logging
 import os
@@ -5,7 +12,9 @@ import os
 from google import genai
 from google.genai import types as genai_types
 from livekit import rtc
-from livekit.agents import Agent, RunContext, function_tool
+from livekit.agents import RunContext, function_tool
+
+from app.agents.persona import PersonaAgent
 
 logger = logging.getLogger(__name__)
 
@@ -34,28 +43,30 @@ IMPORTANT: When the user asks you to generate an image, ALWAYS say a brief ackno
 Be concise and creative. Lean into the multimodal possibilities — when a user describes something, offer to generate it."""
 
 
-class HackathonAgent(Agent):
-    BASE_VIDEO_AWARENESS = """You can only see video when the user enables their camera or screenshare.
-When asked about visuals:
-- Only describe what you can actually see in provided video frames.
-- Never invent visual details that are not present.
-- If no camera is active, tell the user to enable it."""
+class HackathonAgent(PersonaAgent):
+    """Creative multimodal agent with image generation and Lyria music streaming."""
 
     def __init__(self, room: rtc.Room) -> None:
-        full_instructions = f"{self.BASE_VIDEO_AWARENESS}\n\n{PERSONA_INSTRUCTIONS}"
-        super().__init__(instructions=full_instructions)
+        # Set persona fields BEFORE super().__init__ so build_system_prompt() picks them up.
+        self.persona_name = "Hackathon AI"
+        self.persona_instructions = PERSONA_INSTRUCTIONS
 
-        self._room = room
+        # Hackathon-specific state (set before super so they exist for _register_tools)
         self._music_task: asyncio.Task | None = None
         self._music_stop_event = asyncio.Event()
         self._music_track_pub = None
-
         self._image_client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
-
         self._lyria_client = genai.Client(
             api_key=os.environ["GOOGLE_API_KEY"],
             http_options={"api_version": "v1alpha"},
         )
+
+        super().__init__(room)
+
+    def _register_tools(self) -> None:
+        self.register_tool(self.generate_image)
+        self.register_tool(self.start_music)
+        self.register_tool(self.stop_music)
 
     @function_tool()
     async def generate_image(

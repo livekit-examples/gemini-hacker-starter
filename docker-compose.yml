@@ -10,7 +10,7 @@ services:
       REALTIME_MODEL: ${REALTIME_MODEL:-gemini-2.5-flash-native-audio-latest}
       REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
       DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE:-en}
-      DEFAULT_INDUSTRY: ${DEFAULT_INDUSTRY:-sales}
+      DEFAULT_INDUSTRY: ${DEFAULT_INDUSTRY:-hackathon}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     healthcheck:

@@ -40,49 +40,18 @@ def _blocking_agent_start() -> None:
     from livekit.agents import AgentServer, AgentSession, TurnHandlingOptions, inference
     from livekit.plugins import google as lk_google
     from livekit.plugins.turn_detector.multilingual import MultilingualModel
-    from livekit import rtc
 
-    from app.agents.hackathon import (
-        HackathonAgent,
-        REALTIME_MODEL,
-        REALTIME_VOICE,
-        ALLOWED_REALTIME_VOICES,
-    )
+    from app.agents.hackathon import REALTIME_MODEL, REALTIME_VOICE, ALLOWED_REALTIME_VOICES
+    from app.agents.registry import get_agent
+    from app.config import settings
 
     server = AgentServer()
 
     @server.rtc_session(agent_name="gemini-hackathon-agent")
     async def entrypoint(ctx: agents.JobContext):
-        has_video = False
         selected_voice = REALTIME_VOICE
 
-        def on_track_subscribed(
-            track: rtc.Track,
-            publication: rtc.TrackPublication,
-            participant: rtc.RemoteParticipant,
-        ):
-            nonlocal has_video
-            if track.kind == rtc.TrackKind.KIND_VIDEO:
-                has_video = True
-                logger.info("Video track subscribed from %s", participant.identity)
-
-        def on_track_unsubscribed(
-            track: rtc.Track,
-            publication: rtc.TrackPublication,
-            participant: rtc.RemoteParticipant,
-        ):
-            nonlocal has_video
-            if track.kind == rtc.TrackKind.KIND_VIDEO:
-                has_video = any(
-                    pub.track and pub.track.kind == rtc.TrackKind.KIND_VIDEO
-                    for p in ctx.room.remote_participants.values()
-                    for pub in p.track_publications.values()
-                    if pub.subscribed
-                )
-
-        ctx.room.on("track_subscribed", on_track_subscribed)
-        ctx.room.on("track_unsubscribed", on_track_unsubscribed)
-
+        # Read voice preference from participant metadata
         for participant in ctx.room.remote_participants.values():
             metadata = participant.metadata
             if metadata:
@@ -102,15 +71,6 @@ def _blocking_agent_start() -> None:
                 except (json.JSONDecodeError, TypeError):
                     logger.debug("Participant metadata was not valid JSON")
 
-            for publication in participant.track_publications.values():
-                if (
-                    publication.subscribed
-                    and publication.track
-                    and publication.track.kind == rtc.TrackKind.KIND_VIDEO
-                ):
-                    has_video = True
-                    break
-
         turn_handling = TurnHandlingOptions(
             turn_detection=MultilingualModel(),
             endpointing={
@@ -129,9 +89,17 @@ def _blocking_agent_start() -> None:
             turn_handling=turn_handling,
         )
 
+        # Dispatch to the correct agent via the registry using DEFAULT_INDUSTRY.
+        agent = get_agent(settings.default_industry, ctx.room)
+        logger.info(
+            "Dispatching industry='%s' → %s",
+            settings.default_industry,
+            type(agent).__name__,
+        )
+
         await session.start(
             room=ctx.room,
-            agent=HackathonAgent(room=ctx.room),
+            agent=agent,
         )
 
         await ctx.connect()

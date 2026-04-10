@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     realtime_model: str = "gemini-2.5-flash-native-audio-latest"
     realtime_voice: str = "Aoede"
     default_language: str = "en"
-    default_industry: str = "sales"
+    default_industry: str = "hackathon"
 
 
 settings = Settings()
