@@ -13,69 +13,11 @@ async function getDemos(): Promise<DemoCardData[]> {
         return (data.demos ?? []) as DemoCardData[];
       }
     } catch {
-      // fall through to static fallback
+      // fall through to empty list — backend unavailable
     }
   }
-  return FALLBACK_DEMOS;
+  return [];
 }
-
-const FALLBACK_DEMOS: DemoCardData[] = [
-  {
-    slug: 'sales',
-    name: 'Sales Strategy',
-    persona_name: 'Aria',
-    persona_initials: 'AR',
-    persona_role: 'Senior Sales Strategist',
-    value_prop:
-      'Analyse prospect screens in real time and generate tailored proposals on the fly — close faster with an AI co-pilot that knows your deal.',
-    available: true,
-    supported_languages: ['EN', 'IT', 'AR-EG', 'AR-AE'],
-  },
-  {
-    slug: 'manufacturing',
-    name: 'Manufacturing & Quality',
-    persona_name: 'Marco',
-    persona_initials: 'MA',
-    persona_role: 'Process & Quality Engineer',
-    value_prop:
-      'Detect visual defects on the production line and surface the right SOP in seconds — cut rework and keep compliance airtight.',
-    available: false,
-    supported_languages: ['EN', 'IT', 'AR-EG', 'AR-AE'],
-  },
-  {
-    slug: 'logistics',
-    name: 'Logistics & Supply Chain',
-    persona_name: 'Elena',
-    persona_initials: 'EL',
-    persona_role: 'Head of Logistics Operations',
-    value_prop:
-      'Track shipments, flag delays, and brief carrier performance in real time — keep your supply chain moving with zero blind spots.',
-    available: false,
-    supported_languages: ['EN', 'IT', 'AR-EG', 'AR-AE'],
-  },
-  {
-    slug: 'real_estate',
-    name: 'Real Estate Advisory',
-    persona_name: 'Sofia',
-    persona_initials: 'SO',
-    persona_role: 'Senior Property Advisor',
-    value_prop:
-      'Walk through a property on screen and receive live CMA analysis and buyer-profile summaries — turn viewings into offers faster.',
-    available: false,
-    supported_languages: ['EN', 'IT', 'AR-EG', 'AR-AE'],
-  },
-  {
-    slug: 'dental',
-    name: 'Dental Practice',
-    persona_name: 'Dr. Nour',
-    persona_initials: 'DN',
-    persona_role: 'Specialist in Restorative Dentistry',
-    value_prop:
-      'Review dental images with an AI specialist, retrieve patient briefs, and deliver multilingual aftercare instructions at the point of care.',
-    available: false,
-    supported_languages: ['EN', 'IT', 'AR-EG', 'AR-AE'],
-  },
-];
 
 export default async function Page() {
   const demos = await getDemos();

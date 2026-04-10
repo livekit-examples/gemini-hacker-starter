@@ -1,18 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from app.models import AppConfigResponse
+from app.demo_configs import DEMO_CONFIGS, DemoConfig
 
 router = APIRouter()
 
-_DEFAULT_CONFIG = AppConfigResponse(
-    agentName="gemini-hackathon-agent",
-    industry="sales",
-    language="en",
-    accent="#4DA6FF",
-    title="Exodia AI Demo Platform",
-)
 
-
-@router.get("/api/config", response_model=AppConfigResponse)
-async def get_config() -> AppConfigResponse:
-    return _DEFAULT_CONFIG
+@router.get("/api/config", response_model=DemoConfig)
+async def get_config(industry: str) -> DemoConfig:
+    config = DEMO_CONFIGS.get(industry)
+    if config is None:
+        known = ", ".join(sorted(DEMO_CONFIGS.keys()))
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown industry '{industry}'. Known slugs: {known}.",
+        )
+    return config

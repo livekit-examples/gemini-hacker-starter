@@ -8,8 +8,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # Copy dependency files first for layer caching
 COPY pyproject.toml .
 
-# Install dependencies (no dev extras in production)
-RUN uv pip install --system fastapi uvicorn[standard] pydantic-settings PyJWT httpx
+# Install dependencies from pyproject.toml
+RUN uv pip install --system -e .
 
 # Copy application code
 COPY app/ ./app/

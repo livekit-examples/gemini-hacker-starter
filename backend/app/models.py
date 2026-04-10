@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.demo_configs import DemoConfig  # noqa: F401 — re-exported for routers
+
 
 class HealthResponse(BaseModel):
     status: str
@@ -24,13 +26,11 @@ class AppConfigResponse(BaseModel):
 class DemoSummary(BaseModel):
     slug: str
     name: str
-    persona_name: str = ""
-    persona_initials: str = ""
-    persona_role: str = ""
-    value_prop: str = ""
-    available: bool = True
-    supported_languages: list[str] = []
 
 
 class DemosResponse(BaseModel):
-    demos: list[DemoSummary]
+    demos: list[DemoConfig]
+
+
+class DemoConfigResponse(DemoConfig):
+    pass

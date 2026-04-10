@@ -8,8 +8,10 @@ export interface DemoCardData {
   persona_initials: string;
   persona_role: string;
   value_prop: string;
+  accent: string;
   available: boolean;
   supported_languages: string[];
+  disclaimer?: Record<string, string>;
 }
 
 export function DemoCard({
