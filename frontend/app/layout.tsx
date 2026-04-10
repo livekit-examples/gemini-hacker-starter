@@ -63,6 +63,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         {styles && <style>{styles}</style>}
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        <link rel="icon" type="image/jpeg" href="/exodia-logo.jpeg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/exodia-logo.jpeg" />
+        <link rel="mask-icon" href="/exodia-logo.jpeg" color="#4DA6FF" />
       </head>
       <body className="overflow-x-hidden">
         <ThemeProvider
