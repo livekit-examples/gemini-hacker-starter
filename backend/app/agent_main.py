@@ -74,17 +74,6 @@ async def entrypoint(ctx: agents.JobContext):
 
     await ctx.connect()
 
-    try:
-        await session.generate_reply(
-            instructions=(
-                "Greet the user. Let them know you can generate images with NanoBanana 2 "
-                "and play real-time music with Lyria. Mention they can enable their camera "
-                "for visual context."
-            )
-        )
-    except Exception as exc:
-        logger.warning("Initial greeting failed: %s", exc)
-
 
 if __name__ == "__main__":
     sys.argv = ["agent", "start"]

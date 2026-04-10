@@ -13,8 +13,11 @@ export interface DemoConfig {
   persona_name: string;
   persona_initials: string;
   persona_role: string;
-  supported_languages?: string[];
-  available?: boolean;
+  value_prop: string;
+  accent: string;
+  available: boolean;
+  supported_languages: string[];
+  disclaimer?: Record<string, string>;
 }
 
 interface DashboardLayoutProps {
