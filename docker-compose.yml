@@ -11,6 +11,34 @@ services:
       REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
     restart: unless-stopped
 
+  backend:
+    build:
+      context: ./backend
+    environment:
+      LIVEKIT_URL: ${LIVEKIT_URL:?LIVEKIT_URL is required}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?LIVEKIT_API_KEY is required}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?LIVEKIT_API_SECRET is required}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:?GOOGLE_API_KEY is required}
+      REALTIME_MODEL: ${REALTIME_MODEL:-gemini-2.5-flash-native-audio-latest}
+      REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE:-en}
+      DEFAULT_INDUSTRY: ${DEFAULT_INDUSTRY:-sales}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
@@ -23,6 +51,7 @@ services:
       SANDBOX_ID: ${SANDBOX_ID:-}
       NEXT_PUBLIC_APP_CONFIG_ENDPOINT: ${NEXT_PUBLIC_APP_CONFIG_ENDPOINT:-}
       NEXT_PUBLIC_CONN_DETAILS_ENDPOINT: ${NEXT_PUBLIC_CONN_DETAILS_ENDPOINT:-/api/connection-details}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
       PORT: ${FRONTEND_PORT:-3006}
       HOSTNAME: 0.0.0.0
     ports:

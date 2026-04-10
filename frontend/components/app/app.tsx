@@ -31,9 +31,11 @@ export function App({ appConfig }: AppProps) {
   const [selectedVoice, setSelectedVoice] = useState<string>('Aoede');
 
   const tokenSource = useMemo(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const endpointFromEnv = process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT;
-    const endpoint =
-      typeof endpointFromEnv === 'string' && endpointFromEnv.trim().length > 0
+    const endpoint = backendUrl
+      ? `${backendUrl}/api/connection-details`
+      : typeof endpointFromEnv === 'string' && endpointFromEnv.trim().length > 0
         ? endpointFromEnv
         : '/api/connection-details';
 
