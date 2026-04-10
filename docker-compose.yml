@@ -27,4 +27,16 @@ services:
       HOSTNAME: 0.0.0.0
     ports:
       - "${FRONTEND_PORT:-3006}:${FRONTEND_PORT:-3006}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "const http=require('http');const p=parseInt(process.env.PORT||'3006',10);const req=http.get({host:'127.0.0.1',port:p,path:'/api/health',timeout:3000},(res)=>process.exit(res.statusCode===200?0:1));req.on('error',()=>process.exit(1));req.on('timeout',()=>{req.destroy();process.exit(1);});",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
