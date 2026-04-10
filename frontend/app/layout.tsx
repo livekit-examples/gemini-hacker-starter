@@ -1,42 +1,31 @@
-import { Public_Sans } from 'next/font/google';
-import localFont from 'next/font/local';
+import { Fira_Code, Instrument_Serif, Sora } from 'next/font/google';
 import { headers } from 'next/headers';
 import { ThemeProvider } from '@/components/app/theme-provider';
-import { ThemeToggle } from '@/components/app/theme-toggle';
+import { NoiseOverlay } from '@/components/design-system/NoiseOverlay';
+import { ExodiaNav } from '@/components/nav/ExodiaNav';
+import { Footer } from '@/components/Footer';
 import { cn } from '@/lib/shadcn/utils';
 import { getAppConfig, getStyles } from '@/lib/utils';
 import '@/styles/globals.css';
 
-const publicSans = Public_Sans({
-  variable: '--font-public-sans',
+const sora = Sora({
+  variable: '--font-sora',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const commitMono = localFont({
+const instrumentSerif = Instrument_Serif({
+  variable: '--font-instrument-serif',
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
   display: 'swap',
-  variable: '--font-commit-mono',
-  src: [
-    {
-      path: '../fonts/CommitMono-400-Regular.otf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../fonts/CommitMono-700-Regular.otf',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: '../fonts/CommitMono-400-Italic.otf',
-      weight: '400',
-      style: 'italic',
-    },
-    {
-      path: '../fonts/CommitMono-700-Italic.otf',
-      weight: '700',
-      style: 'italic',
-    },
-  ],
+});
+
+const firaCode = Fira_Code({
+  variable: '--font-fira-code',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 interface RootLayoutProps {
@@ -54,8 +43,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       lang="en"
       suppressHydrationWarning
       className={cn(
-        publicSans.variable,
-        commitMono.variable,
+        sora.variable,
+        instrumentSerif.variable,
+        firaCode.variable,
         'scroll-smooth font-sans antialiased'
       )}
     >
@@ -67,31 +57,17 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <link rel="apple-touch-icon" sizes="180x180" href="/exodia-logo.jpeg" />
         <link rel="mask-icon" href="/exodia-logo.jpeg" color="#4DA6FF" />
       </head>
-      <body className="overflow-x-hidden">
+      <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
-          <header className="fixed top-0 left-0 z-50 hidden w-full flex-row justify-between p-6 md:flex">
-            <span className="text-foreground font-mono text-xs font-bold tracking-wider uppercase">
-              Built with{' '}
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://docs.livekit.io/agents"
-                className="underline underline-offset-4"
-              >
-                LiveKit Agents
-              </a>
-            </span>
-          </header>
-
+          <NoiseOverlay />
+          <ExodiaNav />
           {children}
-          <div className="group fixed bottom-0 left-1/2 z-50 mb-2 -translate-x-1/2">
-            <ThemeToggle className="translate-y-20 transition-transform delay-150 duration-300 group-hover:translate-y-0" />
-          </div>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

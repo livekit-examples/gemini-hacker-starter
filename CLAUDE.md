@@ -6,6 +6,8 @@ Transform this hackathon starter into the most compelling AI agent demo platform
 
 **Supported languages:** English, Italian, Arabic (Egyptian dialect), Arabic (Emirati dialect)
 
+> **Product positioning:** This application is **EXODIA Voice Intelligence** — a multimodal AI voice demo sub-product within the EXODIA Technologies family. It is **not** the main EXODIA Technologies marketing or corporate site. The nav brand mark, landing page hero, footer, and all user-facing copy must identify this as *Voice Intelligence*, not just "Technologies". Think of it as: `EXODIA Technologies > Voice Intelligence` — a distinct product with its own landing page, persona cards, and demo dashboards.
+
 ---
 
 ## Architecture Target
@@ -28,6 +30,7 @@ Transform this hackathon starter into the most compelling AI agent demo platform
 │  Agent Class Hierarchy (Python, inside backend/)                │
 │  BaseAgent                                                      │
 │  └── PersonaAgent  (language · tool registry · turn handling)  │
+│      ├── ComuneAgent          ← PRIORITY first                 │
 │      ├── SalesAgent                                             │
 │      ├── ManufacturingAgent                                     │
 │      ├── LogisticsAgent                                         │
@@ -55,6 +58,7 @@ backend/
     agents/
       base.py                 # BaseAgent — core LiveKit wiring
       persona.py              # PersonaAgent — language detection, tool registry
+      comune.py               # ComuneAgent — public administration (PRIORITY)
       sales.py
       manufacturing.py
       logistics.py
@@ -65,12 +69,15 @@ backend/
       profiles.py             # LanguageProfile dataclass + 4 profiles
       detector.py             # language detection from participant metadata
     tools/
+      comune_tools.py         # PRIORITY
       sales_tools.py
       manufacturing_tools.py
       logistics_tools.py
       real_estate_tools.py
       dental_tools.py
     data/
+      comune_services.json
+      comune_applications.json
       manufacturing_sop.json
       logistics_shipments.json
       logistics_carriers.json
@@ -224,6 +231,8 @@ docker compose run --rm backend uv run pytest tests/ -v
 
 Sessions are grouped into phases. Each session has a single focused scope, its own test suite, and a hard exit criterion. Tests must be green before the next session begins.
 
+> **Priority directive (updated):** Frontend design and visual polish are the current top priority. After Session 2, work through **PHASE 2 — Design System (Sessions 5–9) first**, then return to PHASE 1 sessions 3–4. In PHASE 4, the **Public Administration (Comune) demo is the first industry to implement** (Sessions 12–13) — it is the highest-priority industry vertical. Sales follows immediately after (Sessions 14–15). The table and phase headings below reflect this revised execution order.
+
 ---
 
 ## PHASE 1 — Backend Foundation (Sessions 1–4)
@@ -322,28 +331,39 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 **Status:** `[ ] Not started`
 
-**Goal:** The backend has a full `DemoConfig` per industry. `/api/config` and `/api/demos` return real structured data. The frontend is fully config-driven.
+**Goal:** The backend has a canonical `DemoConfig` per industry that is the single source of truth for all display data, persona metadata, and language support. `/api/config` and `/api/demos` return real structured data. The frontend is fully config-driven with no hardcoded display strings.
+
+> **Note:** Session 8 added display fields (`persona_name`, `persona_initials`, `persona_role`, `value_prop`, `available`, `supported_languages`) to `DemoSummary` as a temporary stub. In this session those fields are removed from `DemoSummary` and moved into `DemoConfig`, which becomes the authoritative model. `DemoSummary` reverts to `slug` + `name` only (used for list indexing). The landing page and `FALLBACK_DEMOS` in `app/page.tsx` must be updated to fetch from the full `DemoConfig` endpoint.
 
 **Scope:**
-- `backend/app/demo_configs.py` — `DemoConfig` Pydantic model: `slug`, `name`, `persona_name`, `persona_role`, `value_prop`, `accent`, `supported_languages`, `available` (bool); define all 5 industry configs
-- `app/routers/config.py` — `GET /api/config?industry={slug}` returns full `DemoConfig` for the requested industry; falls back to `DEFAULT_INDUSTRY`
-- `app/routers/demos.py` — `GET /api/demos` now returns list of all 5 `DemoConfig` objects (not stubs)
-- Frontend `app-config.ts` — fetch from backend `/api/config` on server-side render; remove hardcoded defaults that duplicate backend data
-- No "lorem ipsum" — each `DemoConfig` has a real, specific `value_prop` sentence
+- `backend/app/demo_configs.py` — `DemoConfig` Pydantic model:
+  - Identity: `slug`, `name`
+  - Persona: `persona_name`, `persona_initials`, `persona_role`
+  - Display: `value_prop`, `accent`, `available` (bool)
+  - Languages: `supported_languages: list[str]` — all 4 codes for every industry
+  - Dental only: `disclaimer: dict[str, str]` — keyed by language code
+  - Define all 5 industry configs with real, specific copy (no lorem ipsum)
+- `app/models.py` — `DemoSummary` reverts to `slug` + `name` only; add `DemoConfigResponse` wrapping `DemoConfig`
+- `app/routers/config.py` — `GET /api/config?industry={slug}` returns full `DemoConfig`; 404 with descriptive message if unknown slug
+- `app/routers/demos.py` — `GET /api/demos` returns list of `DemoConfig` objects (replaces the extended `DemoSummary` stubs added in Session 8)
+- `frontend/app/page.tsx` — remove `FALLBACK_DEMOS` inline stubs; fetch full `DemoConfig` list from `/api/demos`; `DemoCardData` interface maps to `DemoConfig` fields
+- No hardcoded display strings anywhere in frontend components
 
 **E2E Tests (`backend/tests/`):**
 - `test_demo_configs.py`:
   - All 5 slugs (`sales`, `manufacturing`, `logistics`, `real_estate`, `dental`) present
-  - Each config has non-empty `persona_name`, `value_prop`, `accent`
-  - `supported_languages` contains all 4 language codes for each industry
+  - Each config has non-empty `persona_name`, `persona_initials`, `persona_role`, `value_prop`, `accent`
+  - `supported_languages` contains all 4 language codes for every industry
+  - `available` is a bool for all entries
 - `test_config_endpoint.py`:
-  - `GET /api/config?industry=sales` returns sales config
+  - `GET /api/config?industry=sales` returns sales config with all required fields
   - `GET /api/config?industry=unknown` returns 404 with descriptive message
 - `test_demos_endpoint.py`:
   - Returns exactly 5 items
-  - Each item matches `DemoConfig` schema
+  - Each item matches full `DemoConfig` schema (not just slug + name)
+  - `persona_initials` is 2–3 uppercase characters for all entries
 
-**Exit Criterion:** All tests green. `GET /api/demos` returns full real config. Frontend reads industry config from backend.
+**Exit Criterion:** All tests green. `GET /api/demos` returns full `DemoConfig` for each industry. Frontend landing page reads all display data from backend with no hardcoded fallbacks.
 
 ---
 
@@ -353,7 +373,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 5 — Strip LiveKit Branding + Tailwind Setup
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** Zero LiveKit branding in the frontend. EXODIA color and font tokens installed and working.
 
@@ -380,7 +400,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 6 — Design System Atoms
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** All reusable UI primitives exist and match the style guide exactly. Every other session uses these — nothing is rebuilt from scratch.
 
@@ -408,7 +428,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 7 — ExodiaNav + Root Layout
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** The navigation pill and root layout are production-ready and match the style guide.
 
@@ -436,17 +456,19 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 8 — Landing Page
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
-**Goal:** A polished landing page with GSAP-animated hero and all 5 industry demo cards wired to the backend.
+**Goal:** A polished **EXODIA Voice Intelligence** landing page with GSAP-animated hero and all 5 industry demo cards wired to the backend. This is the sub-product landing page, not a generic EXODIA Technologies corporate page — copy and positioning must reflect "Voice Intelligence" throughout.
 
 **Scope:**
-- `app/page.tsx` — fetches `/api/demos` on server-side render
+- `app/page.tsx` — replaces the old voice-chat entry screen; fetches `/api/demos` on SSR; falls back to static stubs if backend is unavailable
+- `ExodiaNav` brand mark updated to read `EXODIA Voice Intelligence` (was "Technologies")
+- `Footer` brand mark updated to match
 - Hero section:
-  - `font-serif italic text-[clamp(2rem,8.2vw,8rem)] text-ghost leading-none` headline
-  - Accent italic line below in `text-accent`
+  - `font-serif italic text-[clamp(2rem,8.2vw,8rem)] text-ghost leading-none` headline: "Voice Intelligence"
+  - Accent italic subline: "AI agents that see, hear, and act"
   - `font-mono text-sm text-ghost/60` descriptor line
-  - GSAP staggered reveal on `.reveal-text` elements
+  - GSAP staggered reveal via `HeroReveal` client component
 - `components/landing/IndustryGrid.tsx` — responsive CSS grid, renders `DemoCard` for each demo
 - `components/landing/DemoCard.tsx`:
   - Extends `Card` atom
@@ -472,7 +494,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 9 — Dashboard Layout + Core Panels
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** The three-panel dashboard shell exists and is wired to a live agent session. Transcript and tool output panels update in real time.
 
@@ -572,13 +594,76 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ---
 
-## PHASE 4 — Industry Demos (Sessions 12–21)
+## PHASE 4 — Industry Demos (Sessions 12–23)
 
-Each industry is two sessions: **backend** (agent + tools + data) then **frontend** (panel wiring + persona card).
+Each industry is two sessions: **backend** (agent + tools + data) then **frontend** (panel wiring + persona card). **Public Administration (Comune) is first and highest priority.**
 
 ---
 
-### SESSION 12 — Sales: Agent + Tools
+### SESSION 12 — Public Administration (Comune): Agent + Tools ⬅ PRIORITY
+
+**Status:** `[ ] Not started`
+
+**Persona:** Giulia, Municipal Services AI. Patient, precise, empathetic — bridges the gap between bureaucratic complexity and the citizen who just needs to get things done. Fluent in all 4 languages; especially important for Arabic-speaking immigrant communities navigating Italian municipal services.
+
+**Scope:**
+- `backend/app/agents/comune.py` — `ComuneAgent(PersonaAgent)`:
+  - `persona_name = "Giulia"`, `persona_role = "Municipal Services AI"`
+  - Full `persona_instructions` written (min 8 sentences): explains services clearly, never invents requirements, always cites the official document list, offers to book appointments at the end of every service query
+  - Registers 3 tools on `__init__`
+- `backend/app/tools/comune_tools.py`:
+  - `lookup_service_requirements(service_name: str) -> dict` — `{service, required_documents: list[str], processing_days: int, fee_eur: float, office: str, notes: str, found: bool}`; matches by keyword against seeded data
+  - `check_application_status(application_id: str) -> dict` — `{application_id, service, status: "pending"|"approved"|"rejected"|"requires_documents", submitted_on, expected_by, notes, found: bool}`
+  - `book_appointment(service: str, citizen_name: str, preferred_date: str) -> dict` — `{confirmation_id, service, date, time, office, instructions, found: bool}` — returns `found: false` if service not bookable online
+- `backend/app/data/comune_services.json` — 15 municipal services with realistic Italian bureaucratic requirements:
+  - Anagrafe: birth certificate, marriage certificate, death certificate, residency registration, residency change
+  - Civil state: name change, citizenship application
+  - Permits: building permit, commercial activity permit, outdoor seating permit
+  - Transport: parking permit (disabili), ZTL pass, vehicle scrappage declaration
+  - Social: waste collection registration, ISEE declaration assistance
+  - Each entry: `{service_id, name, keywords: list[str], required_documents: list[str], processing_days: int, fee_eur: float, office: str, bookable_online: bool, notes: str}`
+- `backend/app/data/comune_applications.json` — 12 application records with realistic IDs (e.g. `APP-2024-ANA-00341`), statuses, and services
+- `registry.py` — `"comune"` → `ComuneAgent`; add `"comune"` to the 5-industry list (now 6)
+
+**E2E Tests (`backend/tests/test_comune_tools.py`):**
+- `lookup_service_requirements("residenza")` returns `found: True`, non-empty `required_documents` list, numeric `processing_days`
+- `lookup_service_requirements("xyznotexist")` returns `found: False`
+- `check_application_status("APP-2024-ANA-00341")` returns valid dict with `status` one of 4 valid values
+- `check_application_status("APP-FAKE-99999")` returns `found: False`
+- `book_appointment("residency_registration", "Fatima Al-Rashidi", "2025-03-15")` returns `confirmation_id` and `date`
+- `test_comune_data.py`: exactly 15 services, 12 applications; all have required fields; `bookable_online` is a bool for all services
+
+**Exit Criterion:** All tests green. Service data reads as authentic Italian municipal content. Tools return correctly shaped outputs.
+
+---
+
+### SESSION 13 — Public Administration (Comune): Frontend Panel
+
+**Status:** `[ ] Not started`
+
+**Scope:**
+- `components/dashboard/panels/ComunePanel.tsx`:
+  - **Service requirements card:** service name header, `required_documents` as numbered checklist (each item in `font-sans text-sm`), processing time and fee in `font-mono` badges, office name as `Tag`
+  - **Application status card:** application ID in `font-mono`, status badge (green approved / amber pending / red rejected / blue requires_docs), expected-by date, notes
+  - **Appointment confirmation card:** confirmation ID in `font-mono`, date + time + office, instructions text
+- `PersonaCard` for Giulia: initials `"GI"`, role tag `"Municipal Services AI"`
+- `/demo/comune/page.tsx` — fetches config for `"comune"` industry; renders `DashboardLayout` with `ComunePanel` in right column
+- Demo intro card (shown before connecting): value prop, 4 scripted scenario titles as `Tag` pills — e.g. "Residency Registration", "Permit Status", "Document Request", "Appointment Booking"
+- `DemoCard` for Comune on landing page: `available: true` (it is the first fully-built demo)
+
+**E2E Tests:**
+- Playwright `test_comune_demo.spec.ts`:
+  - `/demo/comune` loads without error
+  - `PersonaCard` shows "Giulia"
+  - Simulating a `tool-output` data message with type `"service_requirements"` → checklist renders
+  - Simulating `tool-output` with type `"application_status"` → status badge renders with correct colour
+  - Simulating `tool-output` with type `"appointment_confirmation"` → confirmation ID rendered in mono font
+
+**Exit Criterion:** All tests green. Comune demo page is fully navigable. Persona card, all three panel cards, and the intro screen render correctly.
+
+---
+
+### SESSION 14 — Sales: Agent + Tools  <!-- was Session 12 -->
 
 **Status:** `[ ] Not started`
 
@@ -606,7 +691,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 13 — Sales: Frontend Panel
+### SESSION 15 — Sales: Frontend Panel  <!-- was Session 13 -->
 
 **Status:** `[ ] Not started`
 
@@ -627,7 +712,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 14 — Manufacturing: Agent + Tools + SOP Data
+### SESSION 16 — Manufacturing: Agent + Tools + SOP Data  <!-- was Session 14 -->
 
 **Status:** `[ ] Not started`
 
@@ -656,7 +741,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 15 — Manufacturing: Frontend Panel
+### SESSION 17 — Manufacturing: Frontend Panel  <!-- was Session 15 -->
 
 **Status:** `[ ] Not started`
 
@@ -675,7 +760,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 16 — Logistics: Agent + Tools + Seeded Data
+### SESSION 18 — Logistics: Agent + Tools + Seeded Data  <!-- was Session 16 -->
 
 **Status:** `[ ] Not started`
 
@@ -699,7 +784,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 17 — Logistics: Frontend Panel
+### SESSION 19 — Logistics: Frontend Panel  <!-- was Session 17 -->
 
 **Status:** `[ ] Not started`
 
@@ -718,7 +803,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 18 — Real Estate: Agent + Tools + Seeded Data
+### SESSION 20 — Real Estate: Agent + Tools + Seeded Data  <!-- was Session 18 -->
 
 **Status:** `[ ] Not started`
 
@@ -742,7 +827,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 19 — Real Estate: Frontend Panel
+### SESSION 21 — Real Estate: Frontend Panel  <!-- was Session 19 -->
 
 **Status:** `[ ] Not started`
 
@@ -762,7 +847,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 20 — Dental: Agent + Tools + Seeded Data
+### SESSION 22 — Dental: Agent + Tools + Seeded Data  <!-- was Session 20 -->
 
 **Status:** `[ ] Not started`
 
@@ -796,7 +881,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 21 — Dental: Frontend Panel + Disclaimer
+### SESSION 23 — Dental: Frontend Panel + Disclaimer  <!-- was Session 21 -->
 
 **Status:** `[ ] Not started`
 
@@ -825,7 +910,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 22 — Demo Switching + Persona Transitions
+### SESSION 24 — Demo Switching + Persona Transitions  <!-- was Session 22 -->
 
 **Status:** `[ ] Not started`
 
@@ -850,33 +935,42 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
-### SESSION 23 — Landing Page Polish + GSAP
+### SESSION 25 — Landing Page Polish + GSAP + Carousel  <!-- was Session 23 -->
 
 **Status:** `[ ] Not started`
 
-**Goal:** The landing page is visually compelling enough to open a sales conversation.
+**Goal:** The landing page is visually compelling enough to open a sales conversation. The industry grid has both a desktop grid view and a mobile-first horizontal scroll carousel.
 
 **Scope:**
 - Hero: staggered GSAP reveal on each line of the headline (`stagger: 0.15`, `power3.out`)
-- GSAP scroll-triggered reveal on `IndustryGrid` cards (stagger by index)
+- GSAP `ScrollTrigger` reveal on `IndustryGrid` cards (stagger by index, `start: "top 85%"`)
 - `SectionHeader` component with single-word accent underline used consistently
-- Infinite marquee component (`components/landing/Marquee.tsx`) — optional: showcase 5 industry logos or tech logos; edge fade masks; `logos-scroll` keyframe per style guide
-- Mobile responsiveness pass: landing page and dashboard look correct on 375px viewport
-- `<meta>` tags: `og:title`, `og:description`, `og:image` (static placeholder is fine)
-- Font loading optimised: `display=swap` on Google Fonts import, no FOUT
+- **Scrolling carousel (`components/landing/CarouselGrid.tsx`):**
+  - Horizontal snap-scroll carousel using CSS `scroll-snap-type: x mandatory` — no library dependency
+  - Each card is `scroll-snap-align: start`; container has `overflow-x: auto; scrollbar-width: none`
+  - Prev / Next arrow buttons (`Button` outline variant) appear on `md:` and above; hidden on mobile (swipe-native)
+  - Dot indicators below the carousel; active dot uses `bg-accent`, inactive `bg-graphite`
+  - `IndustryGrid` renders `CarouselGrid` below `md` breakpoint, CSS grid above — controlled by a `useCarousel` hook that reads `window.innerWidth` on mount
+  - Edge fade masks: `mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)`
+- Infinite marquee component (`components/landing/Marquee.tsx`) — tech/stack badges scrolling below hero; edge fade masks; `logos-scroll` CSS keyframe (no JS); content: LiveKit, Gemini, FastAPI, Next.js, Python, TypeScript labels as `Tag` pills
+- `<meta>` tags: `og:title`, `og:description`, `og:image` (static 1200×630 placeholder)
+- Font loading: `display=swap` already set; verify no FOUT on slow 3G (Lighthouse check)
 
 **E2E Tests:**
 - Playwright `test_landing_polish.spec.ts`:
-  - All 5 cards visible after scroll
-  - No element with text overflow on 375px viewport
-  - `og:title` meta tag present
-  - GSAP animations complete without JS errors (check `page.on('console')`)
+  - All 5 cards reachable (visible or scrollable-into-view) on 1280px viewport
+  - On 375px viewport: carousel container is present and has `overflow-x` scroll
+  - Dot indicators count equals number of demo cards (5)
+  - Prev/Next buttons absent on 375px (hidden via CSS)
+  - `og:title` meta tag present and non-empty
+  - GSAP animations complete without JS errors (check `page.on('pageerror')`)
+  - Marquee element is visible and contains at least one `Tag`
 
-**Exit Criterion:** All tests green. Landing page reviewed against style-guide checklist. No layout breaks on mobile.
+**Exit Criterion:** All tests green. Landing page reviewed against style-guide checklist. Carousel works on mobile (manual swipe check). Grid layout intact on desktop.
 
 ---
 
-### SESSION 24 — Production Hardening
+### SESSION 26 — Production Hardening  <!-- was Session 24 -->
 
 **Status:** `[ ] Not started`
 
@@ -903,33 +997,80 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
+## PHASE 6 — Mobile & Responsive Design (Session 25)
+
+---
+
+### SESSION 27 — Mobile Responsiveness Pass  <!-- was Session 25 -->
+
+**Status:** `[ ] Not started`
+
+**Goal:** Every page and panel in the app renders correctly and is fully usable on a 375px (iPhone SE) viewport. No horizontal overflow, no text clipping, no tap targets smaller than 44px.
+
+**Scope:**
+
+**Landing page (`app/page.tsx` + landing components):**
+- Hero text scales correctly with `clamp()` down to 375px — verify no overflow
+- `CarouselGrid` (from Session 23) is the default grid view on mobile — confirm snap behaviour
+- `ExodiaNav` collapses to icon-only or hamburger below `md:`; brand mark truncates gracefully
+- Hero CTA and `ActivePill` links have min tap target `h-11 w-full sm:w-auto`
+
+**Dashboard (`app/demo/[industry]/page.tsx` + dashboard components):**
+- `DashboardLayout` is single-column below `lg:` — left and right panels stack above and below the center
+- `TranscriptPanel` max height `h-64` on mobile with internal scroll; expands on larger screens
+- `ToolOutputPanel` collapses to an accordion or bottom-sheet drawer on mobile (toggle button in `SessionControls`)
+- `SessionControls` stacks vertically on mobile; language selector full-width
+- `PersonaCard` uses compact layout below `md:` (avatar left, name/role right, no status text label)
+- All tap targets (buttons, links, select) meet 44×44px minimum
+
+**Shared:**
+- `globals.css` — add `@media (pointer: coarse)` scroll snap momentum fix for iOS (`-webkit-overflow-scrolling: touch`)
+- No horizontal overflow on any page at 375px (use `max-w-full overflow-x-hidden` on `<body>`)
+- `<meta name="viewport" content="width=device-width, initial-scale=1">` present in `layout.tsx`
+
+**E2E Tests:**
+- Playwright `test_mobile.spec.ts` (all at `{ viewport: { width: 375, height: 812 } }`):
+  - Landing page: no horizontal scrollbar (`scrollWidth === clientWidth` on `<body>`)
+  - Landing page: `CarouselGrid` container present and `overflow-x` is `auto` or `scroll`
+  - Dashboard `/demo/sales`: panels stack vertically (left panel appears above center in DOM order)
+  - Dashboard: all `<button>` elements have bounding box height ≥ 44px
+  - Nav: brand mark visible and not clipped (bounding box width > 0)
+- Lighthouse CI script `scripts/mobile-audit.sh`: run `lhci autorun` on `/` and `/demo/sales`; assert performance ≥ 75, accessibility ≥ 90 on mobile preset
+
+**Exit Criterion:** All Playwright mobile tests green. No horizontal overflow on any page at 375px (visual and automated check). Lighthouse accessibility ≥ 90 on mobile. Dashboard usable on an actual phone (manual smoke test checklist at `docs/testing/session25_mobile_smoke.md`).
+
+---
+
 ## Session Summary
 
 > **Agent instruction:** After completing any session, update the status column below — change `[ ]` to `[x]` for that session. Before starting a new session, scan this table to confirm which sessions are already done so you never re-implement completed work.
 
-| # | Done | Session | Phase | Key Deliverable |
-| --- | --- | --- | --- | --- |
-| 1 | [x] | FastAPI Skeleton | Foundation | 4 routes, Pydantic models, Docker |
-| 2 | [x] | Agent Encapsulation | Foundation | Agent inside FastAPI, standalone service retired |
-| 3 | [ ] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
-| 4 | [ ] | Demo Config System | Foundation | DemoConfig for all 5 industries |
-| 5 | [ ] | Strip LiveKit + Tailwind | Design | EXODIA tokens, fonts, no LiveKit brand |
-| 6 | [ ] | Design System Atoms | Design | Button, Card, Tag, StatusDot, Avatar, etc. |
-| 7 | [ ] | ExodiaNav + Root Layout | Design | Nav pill, footer, layout shell |
-| 8 | [ ] | Landing Page | Design | Hero + 5 DemoCards wired to backend |
-| 9 | [ ] | Dashboard Layout | Design | 3-panel shell, Transcript, ToolOutput, Controls |
-| 10 | [ ] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
-| 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
-| 12 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |
-| 13 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
-| 14 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
-| 15 | [ ] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
-| 16 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
-| 17 | [ ] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
-| 18 | [ ] | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |
-| 19 | [ ] | Real Estate: Frontend | Real Estate | CMApanel, Sofia PersonaCard |
-| 20 | [ ] | Dental: Backend | Dental | DentalAgent, multilingual aftercare, disclaimer |
-| 21 | [ ] | Dental: Frontend | Dental | DentalPanel, disclaimer banner, Dr. Nour card |
-| 22 | [ ] | Demo Switching | Polish | Persona transitions, nav active state |
-| 23 | [ ] | Landing Polish + GSAP | Polish | Animations, mobile, meta tags |
-| 24 | [ ] | Production Hardening | Production | Rate limiting, secrets audit, load test |
+| Order | # | Done | Session | Phase | Key Deliverable |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 1 | [x] | FastAPI Skeleton | Foundation | 4 routes, Pydantic models, Docker |
+| 2 | 2 | [x] | Agent Encapsulation | Foundation | Agent inside FastAPI, standalone service retired |
+| **3** | **5** | **[x]** | **Strip LiveKit + Tailwind** | **Design** | **EXODIA tokens, fonts, no LiveKit brand** |
+| **4** | **6** | **[x]** | **Design System Atoms** | **Design** | **Button, Card, Tag, StatusDot, Avatar, etc.** |
+| **5** | **7** | **[x]** | **ExodiaNav + Root Layout** | **Design** | **Nav pill, footer, layout shell** |
+| **6** | **8** | **[x]** | **Landing Page** | **Design** | **Hero + 6 DemoCards wired to backend** |
+| **7** | **9** | **[x]** | **Dashboard Layout** | **Design** | **3-panel shell, Transcript, ToolOutput, Controls** |
+| 8 | 3 | [ ] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
+| 9 | 4 | [ ] | Demo Config System | Foundation | DemoConfig for all 6 industries, replaces Session 8 stubs |
+| 10 | 10 | [ ] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
+| 11 | 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
+| **12** | **12** | **[ ]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
+| **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
+| 14 | 14 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |
+| 15 | 15 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
+| 16 | 16 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
+| 17 | 17 | [ ] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
+| 18 | 18 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
+| 19 | 19 | [ ] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
+| 20 | 20 | [ ] | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |
+| 21 | 21 | [ ] | Real Estate: Frontend | Real Estate | CMApanel, Sofia PersonaCard |
+| 22 | 22 | [ ] | Dental: Backend | Dental | DentalAgent, multilingual aftercare, disclaimer |
+| 23 | 23 | [ ] | Dental: Frontend | Dental | DentalPanel, disclaimer banner, Dr. Nour card |
+| 24 | 24 | [ ] | Demo Switching | Polish | Persona transitions, nav active state |
+| 25 | 25 | [ ] | Landing Polish + GSAP + Carousel | Polish | Animations, snap carousel, marquee, meta tags |
+| 26 | 26 | [ ] | Production Hardening | Production | Rate limiting, secrets audit, load test |
+| 27 | 27 | [ ] | Mobile Responsiveness | Mobile | 375px layouts, tap targets, Lighthouse ≥ 90 |

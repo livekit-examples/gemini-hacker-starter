@@ -24,6 +24,12 @@ class AppConfigResponse(BaseModel):
 class DemoSummary(BaseModel):
     slug: str
     name: str
+    persona_name: str = ""
+    persona_initials: str = ""
+    persona_role: str = ""
+    value_prop: str = ""
+    available: bool = True
+    supported_languages: list[str] = []
 
 
 class DemosResponse(BaseModel):

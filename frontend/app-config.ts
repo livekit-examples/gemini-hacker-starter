@@ -32,10 +32,10 @@ export const APP_CONFIG_DEFAULTS: AppConfig = {
   supportsScreenShare: true,
   isPreConnectBufferEnabled: true,
 
-  logo: '/lk-logo.svg',
-  accent: '#4285f4',
-  logoDark: '/lk-logo-dark.svg',
-  accentDark: '#1fd5f9',
+  logo: '/exodia-logo.jpeg',
+  accent: '#4DA6FF',
+  logoDark: '/exodia-logo.jpeg',
+  accentDark: '#4DA6FF',
   startButtonText: 'Start hacking',
 
   // agent dispatch configuration

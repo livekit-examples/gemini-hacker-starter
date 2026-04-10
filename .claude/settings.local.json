@@ -18,7 +18,9 @@
       "Bash(node -e \"process.stdin.resume\\(\\);let d='';process.stdin.on\\('data',x=>d+=x\\);process.stdin.on\\('end',\\(\\)=>{const p=JSON.parse\\(d\\);console.log\\('node:',p.engines||'not specified','scripts:',JSON.stringify\\(p.scripts\\)\\)}\\)\")",
       "Bash(docker --version)",
       "Bash(docker compose:*)",
-      "Bash(taskkill //F //IM python.exe)"
+      "Bash(taskkill //F //IM python.exe)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm exec:*)"
     ]
   }
 }
