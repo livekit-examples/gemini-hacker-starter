@@ -22,8 +22,8 @@ export interface AppConfig {
 }
 
 export const APP_CONFIG_DEFAULTS: AppConfig = {
-  companyName: 'Gemini Hackathon',
-  pageTitle: 'Gemini Hacker Starter',
+  companyName: 'Exodia Multimodal Agent Demo',
+  pageTitle: 'Exodia Multimodal Agent Demo',
   pageDescription:
     'Voice, vision, image generation, and real-time music with Gemini 3.1, NanoBanana 2, and Lyria',
 

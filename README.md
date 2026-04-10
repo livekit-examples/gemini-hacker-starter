@@ -1,4 +1,4 @@
-# Gemini Hacker Starter
+# Exodia Multimodal Agent Demo
 
 A minimal starting point for building with **Gemini 3.1**, **NanoBanana 2**, and **Lyria RealTime** on LiveKit. Get a working multimodal agent running in under 10 minutes, then make it your own.
 

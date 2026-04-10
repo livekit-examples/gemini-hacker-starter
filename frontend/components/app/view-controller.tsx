@@ -29,9 +29,17 @@ const VIEW_MOTION_PROPS = {
 
 interface ViewControllerProps {
   appConfig: AppConfig;
+  selectedVoice: string;
+  onSelectedVoiceChange: (voice: string) => void;
+  voiceOptions: string[];
 }
 
-export function ViewController({ appConfig }: ViewControllerProps) {
+export function ViewController({
+  appConfig,
+  selectedVoice,
+  onSelectedVoiceChange,
+  voiceOptions,
+}: ViewControllerProps) {
   const { isConnected, start } = useSessionContext();
 
   return (
@@ -43,6 +51,9 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           {...VIEW_MOTION_PROPS}
           startButtonText={appConfig.startButtonText}
           onStartCall={start}
+          selectedVoice={selectedVoice}
+          onVoiceChange={onSelectedVoiceChange}
+          voiceOptions={voiceOptions}
         />
       )}
       {/* Session view */}

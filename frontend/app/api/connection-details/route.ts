@@ -9,6 +9,8 @@ type ConnectionDetails = {
   participantToken: string;
 };
 
+const ALLOWED_REALTIME_VOICES = new Set(['Aoede', 'Kore', 'Puck', 'Charon', 'Fenrir']);
+
 // NOTE: you are expected to define the following environment variables in `.env.local`:
 const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
@@ -32,14 +34,17 @@ export async function POST(req: Request) {
     // Parse agent configuration from request body
     const body = await req.json();
     const agentName: string = body?.room_config?.agents?.[0]?.agent_name;
+    const requestedVoice = parseRequestedVoice(body?.voice);
 
     // Generate participant token
     const participantName = 'user';
     const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10_000)}`;
     const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
 
+    const metadata = requestedVoice ? JSON.stringify({ realtimeVoice: requestedVoice }) : undefined;
+
     const participantToken = await createParticipantToken(
-      { identity: participantIdentity, name: participantName },
+      { identity: participantIdentity, name: participantName, metadata },
       roomName,
       agentName
     );
@@ -61,6 +66,14 @@ export async function POST(req: Request) {
       return new NextResponse(error.message, { status: 500 });
     }
   }
+}
+
+function parseRequestedVoice(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  return ALLOWED_REALTIME_VOICES.has(value) ? value : undefined;
 }
 
 function createParticipantToken(

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import os
 
@@ -27,8 +28,10 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 # Use a model that's broadly available for Gemini Live via API keys.
 REALTIME_MODEL = os.getenv("REALTIME_MODEL", "gemini-2.5-flash-native-audio-latest")
+REALTIME_VOICE = os.getenv("REALTIME_VOICE", "Aoede")
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"  # NanoBanana 2
 LYRIA_MODEL = "models/lyria-realtime-exp"
+ALLOWED_REALTIME_VOICES = {"Aoede", "Kore", "Puck", "Charon", "Fenrir"}
 
 # ─────────────────────────────────────────────
 # HACK HERE: change the agent's persona
@@ -40,6 +43,12 @@ Your capabilities:
 - generate_image: Create images with NanoBanana 2 (Gemini 3.1 Flash Image). Use this when asked to generate, create, render, or visualize anything.
 - start_music: Play real-time generative music with Lyria RealTime. Use this for soundtracks, ambience, or any audio atmosphere.
 - stop_music: Stop the current music.
+
+Expressive audio style (Gemini Live):
+- You may use short non-verbal vocal expressions when they improve the interaction, such as: laughing, chuckling, sighing, gasping, whispering, or a brief thoughtful pause.
+- Keep these cues subtle and occasional (generally at most one per reply).
+- Prefer concise, natural delivery over theatrical performance.
+- Do not overuse expressive cues, and avoid using them in safety-critical or factual explanations.
 
 IMPORTANT: When the user asks you to generate an image, ALWAYS say a brief acknowledgment first (like "On it!" or "Let me create that for you") before calling generate_image. The image takes a few seconds to generate, so the user needs to know you heard them.
 
@@ -239,6 +248,7 @@ server = AgentServer()
 @server.rtc_session(agent_name="gemini-hackathon-agent")
 async def entrypoint(ctx: agents.JobContext):
     has_video = False
+    selected_voice = REALTIME_VOICE
 
     def on_track_subscribed(
         track: rtc.Track,
@@ -268,6 +278,24 @@ async def entrypoint(ctx: agents.JobContext):
     ctx.room.on("track_unsubscribed", on_track_unsubscribed)
 
     for participant in ctx.room.remote_participants.values():
+        metadata = participant.metadata
+        if metadata:
+            try:
+                parsed = json.loads(metadata)
+                requested_voice = parsed.get("realtimeVoice")
+                if (
+                    isinstance(requested_voice, str)
+                    and requested_voice in ALLOWED_REALTIME_VOICES
+                ):
+                    selected_voice = requested_voice
+                    logger.info(
+                        "Using requested realtime voice from participant metadata: %s",
+                        selected_voice,
+                    )
+                    break
+            except (json.JSONDecodeError, TypeError):
+                logger.debug("Participant metadata was not valid JSON")
+
         for publication in participant.track_publications.values():
             if (
                 publication.subscribed
@@ -277,21 +305,23 @@ async def entrypoint(ctx: agents.JobContext):
                 has_video = True
                 break
 
+    # LiveKit's latest recommended end-of-turn detector (blog: v0.4.1-intl).
+    turn_handling = TurnHandlingOptions(
+        turn_detection=MultilingualModel(),
+        endpointing={
+            "mode": "dynamic",
+            "min_delay": 0.4,
+            "max_delay": 2.8,
+        },
+    )
+
     session = AgentSession(
         llm=google.realtime.RealtimeModel(
             model=REALTIME_MODEL,
-            voice="Aoede",
+            voice=selected_voice,
         ),
-        # Use LiveKit's context-aware turn detector for improved human pause handling.
         stt=inference.STT(language="multi"),
-        turn_handling=TurnHandlingOptions(
-            turn_detection=MultilingualModel(),
-            endpointing={
-                "mode": "dynamic",
-                "min_delay": 0.4,
-                "max_delay": 2.8,
-            },
-        ),
+        turn_handling=turn_handling,
     )
 
     await session.start(

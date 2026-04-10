@@ -96,8 +96,20 @@ export function getStyles(appConfig: AppConfig) {
  * @returns A token source for a sandboxed LiveKit session
  */
 export function getSandboxTokenSource(appConfig: AppConfig) {
+  return getEndpointTokenSource(
+    appConfig,
+    process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT!,
+    undefined
+  );
+}
+
+export function getEndpointTokenSource(
+  appConfig: AppConfig,
+  endpoint: string,
+  voice?: string
+) {
   return TokenSource.custom(async () => {
-    const url = new URL(process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT!, window.location.origin);
+    const url = new URL(endpoint, window.location.origin);
     const sandboxId = appConfig.sandboxId ?? '';
     const roomConfig = appConfig.agentName
       ? {
@@ -114,6 +126,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
         },
         body: JSON.stringify({
           room_config: roomConfig,
+          voice,
         }),
       });
       return await res.json();

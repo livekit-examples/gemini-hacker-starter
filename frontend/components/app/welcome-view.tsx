@@ -1,4 +1,11 @@
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 function WelcomeImage() {
   return (
@@ -21,11 +28,17 @@ function WelcomeImage() {
 interface WelcomeViewProps {
   startButtonText: string;
   onStartCall: () => void;
+  selectedVoice: string;
+  onVoiceChange: (voice: string) => void;
+  voiceOptions: string[];
 }
 
 export const WelcomeView = ({
   startButtonText,
   onStartCall,
+  selectedVoice,
+  onVoiceChange,
+  voiceOptions,
   ref,
 }: React.ComponentProps<'div'> & WelcomeViewProps) => {
   return (
@@ -37,10 +50,28 @@ export const WelcomeView = ({
           Voice, vision, images, and music — powered by Gemini 3.1, NanoBanana 2, and Lyria
         </p>
 
+        <div className="mt-6 flex w-64 flex-col items-start gap-2 text-left">
+          <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            Agent voice
+          </p>
+          <Select value={selectedVoice} onValueChange={onVoiceChange}>
+            <SelectTrigger className="w-64 rounded-full">
+              <SelectValue placeholder="Choose a voice" />
+            </SelectTrigger>
+            <SelectContent>
+              {voiceOptions.map((voice) => (
+                <SelectItem key={voice} value={voice}>
+                  {voice}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <Button
           size="lg"
           onClick={onStartCall}
-          className="mt-6 w-64 rounded-full font-mono text-xs font-bold tracking-wider uppercase"
+          className="mt-5 w-64 rounded-full font-mono text-xs font-bold tracking-wider uppercase"
         >
           {startButtonText}
         </Button>
