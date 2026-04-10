@@ -2,15 +2,29 @@ services:
   agent:
     build:
       context: ./agent
-    env_file:
-      - ./agent/.env.local
+    environment:
+      LIVEKIT_URL: ${LIVEKIT_URL:-wss://your-project.livekit.cloud}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-your_livekit_api_key}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-your_livekit_api_secret}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-your_google_api_key}
+      REALTIME_MODEL: ${REALTIME_MODEL:-gemini-2.5-flash-native-audio-latest}
+      REALTIME_VOICE: ${REALTIME_VOICE:-Aoede}
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
+    environment:
+      NODE_ENV: production
+      LIVEKIT_URL: ${LIVEKIT_URL:-wss://your-project.livekit.cloud}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-your_livekit_api_key}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-your_livekit_api_secret}
+      AGENT_NAME: ${AGENT_NAME:-gemini-hackathon-agent}
+      SANDBOX_ID: ${SANDBOX_ID:-}
+      NEXT_PUBLIC_APP_CONFIG_ENDPOINT: ${NEXT_PUBLIC_APP_CONFIG_ENDPOINT:-}
+      NEXT_PUBLIC_CONN_DETAILS_ENDPOINT: ${NEXT_PUBLIC_CONN_DETAILS_ENDPOINT:-}
+      PORT: ${FRONTEND_PORT:-3006}
+      HOSTNAME: 0.0.0.0
     ports:
-      - "3001:3000"
-    env_file:
-      - ./frontend/.env.local
+      - "${FRONTEND_PORT:-3006}:${FRONTEND_PORT:-3006}"
     restart: unless-stopped
