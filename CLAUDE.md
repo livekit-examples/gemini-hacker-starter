@@ -181,6 +181,7 @@ LiveKit brand artifacts to strip: `/lk-logo.svg`, `/lk-logo-dark.svg`, all `lk-*
 6. One session = one PR with a passing CI check.
 7. Zero LiveKit branding visible in the UI at any point after Session 6.
 8. New personas are added by subclassing `PersonaAgent` + registering in `registry.py` only.
+9. Every industry `DemoConfig` ships a `demo_scenarios` list (model: `DemoScenario { title, description, steps: list[str] }`). Each scenario is a realistic multi-turn journey: a one-line context description and 2–4 ordered prompts the presenter speaks aloud. These are rendered live in the dashboard's `DemoGuidePanel` (left column, below `PersonaCard`) — collapsible cards the user expands during the session. Minimum 4 scenarios per industry, covering all registered tools and at least one failure/edge-case path.
 
 ---
 
@@ -650,6 +651,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 - `/demo/comune/page.tsx` — fetches config for `"comune"` industry; renders `DashboardLayout` with `ComunePanel` in right column
 - Demo intro card (shown before connecting): value prop, 4 scripted scenario titles as `Tag` pills — e.g. "Residency Registration", "Permit Status", "Document Request", "Appointment Booking"
 - `DemoCard` for Comune on landing page: `available: true` (it is the first fully-built demo)
+- `demo_scenarios` populated in `DEMO_CONFIGS["comune"]` with 5 multi-step journeys covering all 3 tools and at least one rejection/failure path (per Cross-Session Rule 9)
 
 **E2E Tests:**
 - Playwright `test_comune_demo.spec.ts`:

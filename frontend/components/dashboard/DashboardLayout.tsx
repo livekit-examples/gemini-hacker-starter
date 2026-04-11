@@ -6,6 +6,7 @@ import { TranscriptPanel } from './TranscriptPanel';
 import { ToolOutputPanel } from './ToolOutputPanel';
 import { SessionControls } from './SessionControls';
 import { VoiceActivity } from './VoiceActivity';
+import { DemoGuidePanel, type DemoScenario } from './DemoGuidePanel';
 
 export interface LanguageInfo {
   code: string;
@@ -24,6 +25,7 @@ export interface DemoConfig {
   accent: string;
   available: boolean;
   supported_languages: LanguageInfo[];
+  demo_scenarios?: DemoScenario[];
   disclaimer?: Record<string, string>;
 }
 
@@ -78,6 +80,9 @@ export function DashboardLayout({
           connectionState={connectionState}
           language={currentLang ? `${currentLang.flag} ${currentLang.code.toUpperCase()}` : selectedLanguage.toUpperCase()}
         />
+        {config.demo_scenarios?.length ? (
+          <DemoGuidePanel scenarios={config.demo_scenarios} className="overflow-y-auto max-h-[60vh]" />
+        ) : null}
       </div>
 
       {/* ── Center panel — flex-1 ────────────────────────────────────── */}

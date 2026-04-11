@@ -24,6 +24,12 @@ def _lang(code: str) -> LanguageInfo:
 _ALL_LANGUAGES: list[LanguageInfo] = [_lang(c) for c in ("en", "it", "ar-EG", "ar-AE")]
 
 
+class DemoScenario(BaseModel):
+    title: str          # short label shown as a heading
+    description: str    # one-line context setting the scene
+    steps: list[str]    # ordered prompts to speak aloud, one at a time
+
+
 class DemoConfig(BaseModel):
     # Identity
     slug: str
@@ -38,6 +44,8 @@ class DemoConfig(BaseModel):
     available: bool
     # Languages — full LanguageInfo objects, not raw codes
     supported_languages: list[LanguageInfo]
+    # Suggested voice prompts shown in the dashboard
+    demo_scenarios: list[DemoScenario] = []
     # Dental only — keyed by language code
     disclaimer: dict[str, str] = {}
 
@@ -57,6 +65,53 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         accent="#4DA6FF",
         available=True,
         supported_languages=_ALL_LANGUAGES,
+        demo_scenarios=[
+            DemoScenario(
+                title="New Arrival — Residency Registration",
+                description="You just moved from Egypt and need to register your address.",
+                steps=[
+                    "I just moved to Milan from Egypt. I need to register my residency. What documents do I need?",
+                    "I have a permesso di soggiorno. Is the service free?",
+                    "Can you book an appointment for me? My name is Fatima Al-Rashidi and I'm free on March 15th.",
+                ],
+            ),
+            DemoScenario(
+                title="Stuck Building Permit",
+                description="Your architect submitted a permit months ago with no update.",
+                steps=[
+                    "My architect applied for a building permit in September. The ID is APP-2024-PER-00078. Any update?",
+                    "What exactly are the updated project drawings supposed to include?",
+                    "How long does a building permit normally take once the documents are complete?",
+                ],
+            ),
+            DemoScenario(
+                title="Citizenship Journey",
+                description="A 12-year resident ready to start the naturalisation process.",
+                steps=[
+                    "I've been living in Italy for 12 years. How do I apply for Italian citizenship?",
+                    "I'm from Egypt — do I need to apostille my birth certificate?",
+                    "That's a lot of documents. Can you book an appointment so the Comune can help me collect them?",
+                ],
+            ),
+            DemoScenario(
+                title="ISEE for School Fees",
+                description="A parent who needs an ISEE certificate to access reduced tuition.",
+                steps=[
+                    "I need an ISEE certificate for my children's school fees. What documents do I bring?",
+                    "I already started the process. My reference is APP-2024-SOC-00389. Is it ready?",
+                    "Where exactly do I bring the bank statement to complete the application?",
+                ],
+            ),
+            DemoScenario(
+                title="Rejected Outdoor Seating",
+                description="A café owner whose dehors application was turned down.",
+                steps=[
+                    "I applied for outdoor seating for my café. The ID is APP-2024-PER-00031. What happened?",
+                    "Can I appeal the decision or submit a new application?",
+                    "What documents would I need if I apply for a different area?",
+                ],
+            ),
+        ],
     ),
     "sales": DemoConfig(
         slug="sales",
