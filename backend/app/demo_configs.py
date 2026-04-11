@@ -43,6 +43,21 @@ class DemoConfig(BaseModel):
 
 
 DEMO_CONFIGS: dict[str, DemoConfig] = {
+    "comune": DemoConfig(
+        slug="comune",
+        name="Servizi Comunali",
+        persona_name="Giulia",
+        persona_initials="GI",
+        persona_role="Municipal Services AI",
+        value_prop=(
+            "Guide citizens through Italian municipal bureaucracy in real time — "
+            "look up document requirements, track application status, and book "
+            "appointments across all 4 languages, including Arabic for immigrant communities."
+        ),
+        accent="#4DA6FF",
+        available=True,
+        supported_languages=_ALL_LANGUAGES,
+    ),
     "sales": DemoConfig(
         slug="sales",
         name="Sales Strategy",

@@ -2,8 +2,11 @@ import { redirect } from 'next/navigation';
 import type { DemoConfig } from '@/components/dashboard/DashboardLayout';
 import { DemoClient } from './DemoClient';
 
+export const dynamic = 'force-dynamic';
+
 async function getDemoConfig(industry: string): Promise<DemoConfig | null> {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const backendUrl =
+    process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!backendUrl) return null;
   try {
     const res = await fetch(`${backendUrl}/api/config?industry=${industry}`, {

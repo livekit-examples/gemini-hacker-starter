@@ -43,16 +43,17 @@ def _build_registry() -> dict[str, type[PersonaAgent]]:
     when individual agent modules import from registry.
     """
     from app.agents.hackathon import HackathonAgent
+    from app.agents.comune import ComuneAgent
 
     return {
         "hackathon": HackathonAgent,
+        "comune": ComuneAgent,
         # Industry agents — implemented in later sessions:
         "sales": DefaultAgent,
         "manufacturing": DefaultAgent,
         "logistics": DefaultAgent,
         "real_estate": DefaultAgent,
         "dental": DefaultAgent,
-        "comune": DefaultAgent,
     }
 
 

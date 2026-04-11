@@ -10,6 +10,9 @@ interface SessionControlsProps {
   onReset: () => void;
   selectedLanguage?: string;
   onLanguageChange?: (code: string) => void;
+  microphones?: Array<{ deviceId: string; label: string }>;
+  selectedMicrophoneId?: string;
+  onMicrophoneChange?: (deviceId: string) => void;
   className?: string;
 }
 
@@ -19,6 +22,9 @@ export function SessionControls({
   onReset,
   selectedLanguage = 'en',
   onLanguageChange,
+  microphones = [],
+  selectedMicrophoneId,
+  onMicrophoneChange,
   className,
 }: SessionControlsProps) {
   return (
@@ -51,6 +57,30 @@ export function SessionControls({
           {languages.map((lang) => (
             <option key={lang.code} value={lang.code}>
               {lang.flag} {lang.display_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="microphone-selector"
+          className="font-mono text-[10px] text-ghost/50 uppercase tracking-widest"
+        >
+          Microphone
+        </label>
+        <select
+          id="microphone-selector"
+          data-testid="microphone-selector"
+          value={selectedMicrophoneId ?? ''}
+          onChange={(e) => onMicrophoneChange?.(e.target.value)}
+          className="w-full bg-[#05050A] border border-graphite rounded-[2rem] px-4 py-2.5 font-mono text-xs text-ghost/70 focus:outline-none focus:border-accent/50 cursor-pointer"
+          aria-label="Microphone selector"
+        >
+          <option value="">Default microphone</option>
+          {microphones.map((microphone) => (
+            <option key={microphone.deviceId || microphone.label} value={microphone.deviceId}>
+              {microphone.label}
             </option>
           ))}
         </select>

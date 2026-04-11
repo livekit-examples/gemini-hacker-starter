@@ -1,0 +1,110 @@
+[
+  {
+    "application_id": "APP-2024-ANA-00341",
+    "service": "Iscrizione Anagrafica (Residenza)",
+    "service_id": "ANA-004",
+    "status": "pending",
+    "submitted_on": "2024-11-03",
+    "expected_by": "2024-12-18",
+    "notes": "In attesa del sopralluogo della polizia municipale. Verifica programmata per la settimana del 9 dicembre."
+  },
+  {
+    "application_id": "APP-2024-ANA-00289",
+    "service": "Cambio di Indirizzo",
+    "service_id": "ANA-005",
+    "status": "approved",
+    "submitted_on": "2024-10-15",
+    "expected_by": "2024-11-14",
+    "notes": "Variazione anagrafica completata. Il nuovo indirizzo è operativo dal 5 novembre 2024."
+  },
+  {
+    "application_id": "APP-2024-STA-00112",
+    "service": "Domanda di Cittadinanza Italiana",
+    "service_id": "STA-002",
+    "status": "pending",
+    "submitted_on": "2024-03-22",
+    "expected_by": "2026-03-22",
+    "notes": "Pratica trasmessa alla Prefettura in data 14 aprile 2024. I tempi medi di risposta dalla Prefettura sono di 18-24 mesi."
+  },
+  {
+    "application_id": "APP-2024-PER-00078",
+    "service": "Permesso di Costruire",
+    "service_id": "PER-001",
+    "status": "requires_documents",
+    "submitted_on": "2024-09-10",
+    "expected_by": "2024-12-25",
+    "notes": "Richiesta integrazione documentale: mancano le tavole di progetto aggiornate firmate dal tecnico abilitato. Integrare entro il 20 dicembre 2024."
+  },
+  {
+    "application_id": "APP-2024-PER-00054",
+    "service": "Autorizzazione Attività Commerciale (SCIA)",
+    "service_id": "PER-002",
+    "status": "approved",
+    "submitted_on": "2024-08-01",
+    "expected_by": "2024-09-30",
+    "notes": "SCIA accettata. L'attività può essere esercitata dal 2 agosto 2024. Accertamento ispezione ASL completato con esito positivo."
+  },
+  {
+    "application_id": "APP-2024-TRA-00203",
+    "service": "Contrassegno Invalidi",
+    "service_id": "TRA-001",
+    "status": "approved",
+    "submitted_on": "2024-10-28",
+    "expected_by": "2024-11-27",
+    "notes": "Contrassegno emesso e disponibile al ritiro presso lo Sportello Disabilità. Validità 5 anni fino al 28 ottobre 2029."
+  },
+  {
+    "application_id": "APP-2024-TRA-00187",
+    "service": "Pass ZTL",
+    "service_id": "TRA-002",
+    "status": "pending",
+    "submitted_on": "2024-11-18",
+    "expected_by": "2024-12-03",
+    "notes": "In fase di verifica dei requisiti. La targa verrà abilitata al transito nella ZTL Centro Storico entro la data prevista."
+  },
+  {
+    "application_id": "APP-2024-SOC-00445",
+    "service": "Iscrizione Raccolta Rifiuti (TARI)",
+    "service_id": "SOC-001",
+    "status": "approved",
+    "submitted_on": "2024-07-15",
+    "expected_by": "2024-07-25",
+    "notes": "Utenza TARI attivata dal 15 luglio 2024. Il primo avviso di pagamento sarà emesso a gennaio 2025."
+  },
+  {
+    "application_id": "APP-2024-STA-00067",
+    "service": "Cambio di Nome",
+    "service_id": "STA-001",
+    "status": "pending",
+    "submitted_on": "2024-06-05",
+    "expected_by": "2024-09-05",
+    "notes": "Pratica trasmessa alla Prefettura di Milano. In attesa di autorizzazione ministeriale. I tempi possono estendersi a 6 mesi."
+  },
+  {
+    "application_id": "APP-2024-PER-00031",
+    "service": "Occupazione Suolo Pubblico (Dehors)",
+    "service_id": "PER-003",
+    "status": "rejected",
+    "submitted_on": "2024-05-10",
+    "expected_by": "2024-06-09",
+    "notes": "Domanda respinta: l'area richiesta insiste su una strada classificata come via d'emergenza. È possibile presentare nuova domanda per un'area adiacente non soggetta a vincoli."
+  },
+  {
+    "application_id": "APP-2024-ANA-00412",
+    "service": "Certificato di Nascita",
+    "service_id": "ANA-001",
+    "status": "approved",
+    "submitted_on": "2024-11-20",
+    "expected_by": "2024-11-21",
+    "notes": "Certificato rilasciato. Disponibile al ritiro allo sportello oppure via PEC se indicata in fase di richiesta."
+  },
+  {
+    "application_id": "APP-2024-SOC-00389",
+    "service": "Assistenza Dichiarazione ISEE",
+    "service_id": "SOC-002",
+    "status": "requires_documents",
+    "submitted_on": "2024-11-05",
+    "expected_by": "2024-11-12",
+    "notes": "Manca la documentazione del conto corrente al 31/12/2023. Portare l'estratto conto completo allo sportello CAF per completare la pratica."
+  }
+]

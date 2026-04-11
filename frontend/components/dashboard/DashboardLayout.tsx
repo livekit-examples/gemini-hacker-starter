@@ -32,6 +32,9 @@ interface DashboardLayoutProps {
   connectionState?: 'connected' | 'connecting' | 'idle';
   selectedLanguage?: string;
   onLanguageChange?: (code: string) => void;
+  microphones?: Array<{ deviceId: string; label: string }>;
+  selectedMicrophoneId?: string;
+  onMicrophoneChange?: (deviceId: string) => void;
   onDisconnect?: () => void;
   onReset?: () => void;
   className?: string;
@@ -42,6 +45,9 @@ export function DashboardLayout({
   connectionState = 'idle',
   selectedLanguage = 'en',
   onLanguageChange,
+  microphones,
+  selectedMicrophoneId,
+  onMicrophoneChange,
   onDisconnect = () => {},
   onReset = () => {},
   className,
@@ -96,6 +102,9 @@ export function DashboardLayout({
           onReset={onReset}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}
+          microphones={microphones}
+          selectedMicrophoneId={selectedMicrophoneId}
+          onMicrophoneChange={onMicrophoneChange}
         />
       </div>
     </div>

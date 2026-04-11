@@ -3,8 +3,13 @@ import { HeroReveal } from '@/components/landing/HeroReveal';
 import { IndustryGrid } from '@/components/landing/IndustryGrid';
 import type { DemoCardData } from '@/components/landing/DemoCard';
 
+// Force dynamic rendering so demos are fetched at request time, not build time.
+export const dynamic = 'force-dynamic';
+
 async function getDemos(): Promise<DemoCardData[]> {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  // Prefer the server-only var; fall back to the public one for local dev.
+  const backendUrl =
+    process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_BACKEND_URL;
   if (backendUrl) {
     try {
       const res = await fetch(`${backendUrl}/api/demos`, { cache: 'no-store' });

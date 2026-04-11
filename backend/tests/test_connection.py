@@ -53,3 +53,24 @@ def test_connection_details_room_name_matches_token():
     data = response.json()
     decoded = _decode_jwt_payload(data["participantToken"])
     assert decoded["video"]["room"] == data["roomName"]
+
+
+def test_connection_details_post_sets_room_config_and_metadata():
+    response = client.post(
+        "/api/connection-details",
+        json={
+            "language": "ar-EG",
+            "industry": "comune",
+            "room_config": {"agents": [{"agent_name": "gemini-hackathon-agent"}]},
+        },
+    )
+    assert response.status_code == 200
+
+    decoded = _decode_jwt_payload(response.json()["participantToken"])
+
+    assert "roomConfig" in decoded
+    assert decoded["roomConfig"]["agents"][0]["agentName"] == "gemini-hackathon-agent"
+
+    metadata = json.loads(decoded["metadata"])
+    assert metadata["preferredLanguage"] == "ar-EG"
+    assert metadata["industry"] == "comune"

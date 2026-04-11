@@ -4,11 +4,11 @@ import pytest
 
 from app.demo_configs import DEMO_CONFIGS
 
-EXPECTED_SLUGS = {"sales", "manufacturing", "logistics", "real_estate", "dental"}
+EXPECTED_SLUGS = {"comune", "sales", "manufacturing", "logistics", "real_estate", "dental"}
 EXPECTED_LANGUAGES = {"en", "it", "ar-EG", "ar-AE"}
 
 
-def test_all_five_slugs_present():
+def test_all_six_slugs_present():
     assert set(DEMO_CONFIGS.keys()) == EXPECTED_SLUGS
 
 

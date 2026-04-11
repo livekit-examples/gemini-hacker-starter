@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TokenSource } from 'livekit-client';
-import { useSession, useSessionContext } from '@livekit/components-react';
+import { useRoomContext, useSession, useSessionContext } from '@livekit/components-react';
 import { AgentSessionProvider } from '@/components/agents-ui/agent-session-provider';
 import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
 import { DashboardLayout, type DemoConfig } from '@/components/dashboard/DashboardLayout';
@@ -15,13 +15,21 @@ interface DemoDashboardProps {
   onLanguageChange: (code: string) => void;
 }
 
+interface MicrophoneInfo {
+  deviceId: string;
+  label: string;
+}
+
 /**
  * Inner dashboard — must render inside AgentSessionProvider so LiveKit
  * hooks (useSessionContext, useRoomContext, useVoiceAssistant) are available.
  */
 function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: DemoDashboardProps) {
   const router = useRouter();
+  const room = useRoomContext();
   const { isConnected, start, end } = useSessionContext();
+  const [microphones, setMicrophones] = useState<MicrophoneInfo[]>([]);
+  const [selectedMicrophoneId, setSelectedMicrophoneId] = useState<string>('');
 
   useAgentErrors();
 
@@ -29,6 +37,49 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
   useEffect(() => {
     start();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const mediaDevices = navigator.mediaDevices;
+    if (!mediaDevices?.enumerateDevices) {
+      return;
+    }
+
+    const refreshMicrophones = async () => {
+      try {
+        const devices = await mediaDevices.enumerateDevices();
+        const audioInputs = devices
+          .filter((device) => device.kind === 'audioinput')
+          .map((device, index) => ({
+            deviceId: device.deviceId,
+            label: device.label || `Microphone ${index + 1}`,
+          }));
+        setMicrophones(audioInputs);
+      } catch (error) {
+        console.error('Failed to enumerate audio input devices', error);
+      }
+    };
+
+    refreshMicrophones();
+    mediaDevices.addEventListener('devicechange', refreshMicrophones);
+
+    return () => {
+      mediaDevices.removeEventListener('devicechange', refreshMicrophones);
+    };
+  }, []);
+
+  const handleMicrophoneChange = async (deviceId: string) => {
+    setSelectedMicrophoneId(deviceId);
+
+    if (!isConnected || !deviceId) {
+      return;
+    }
+
+    try {
+      await room.switchActiveDevice('audioinput', deviceId);
+    } catch (error) {
+      console.error('Failed to switch microphone device', error);
+    }
+  };
 
   const connectionState = isConnected ? 'connected' : 'connecting';
 
@@ -43,6 +94,9 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
       connectionState={connectionState}
       selectedLanguage={selectedLanguage}
       onLanguageChange={onLanguageChange}
+      microphones={microphones}
+      selectedMicrophoneId={selectedMicrophoneId}
+      onMicrophoneChange={handleMicrophoneChange}
       onDisconnect={end}
       onReset={handleReset}
     />
@@ -67,12 +121,18 @@ export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) 
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: initialLanguage }),
+        body: JSON.stringify({
+          language: selectedLanguage,
+          industry: config.slug,
+          room_config: {
+            agents: [{ agent_name: 'gemini-hackathon-agent' }],
+          },
+        }),
       });
       if (!res.ok) throw new Error(`Connection details fetch failed: ${res.status}`);
       return res.json();
     });
-  }, [initialLanguage]);
+  }, [config.slug, selectedLanguage]);
 
   const session = useSession(tokenSource);
 

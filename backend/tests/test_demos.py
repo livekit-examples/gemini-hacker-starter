@@ -6,7 +6,7 @@ from app.main import app
 
 client = TestClient(app)
 
-EXPECTED_SLUGS = {"sales", "manufacturing", "logistics", "real_estate", "dental"}
+EXPECTED_SLUGS = {"comune", "sales", "manufacturing", "logistics", "real_estate", "dental"}
 REQUIRED_FIELDS = {
     "slug",
     "name",
@@ -25,11 +25,11 @@ def test_demos_status_200():
     assert response.status_code == 200
 
 
-def test_demos_returns_five_items():
+def test_demos_returns_six_items():
     response = client.get("/api/demos")
     data = response.json()
     assert "demos" in data
-    assert len(data["demos"]) == 5
+    assert len(data["demos"]) == 6
 
 
 def test_demos_contains_all_expected_slugs():

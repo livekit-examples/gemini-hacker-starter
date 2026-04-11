@@ -21,7 +21,15 @@
       "Bash(taskkill //F //IM python.exe)",
       "Bash(pnpm build:*)",
       "Bash(pnpm exec:*)",
-      "Bash(pnpm tsc:*)"
+      "Bash(pnpm tsc:*)",
+      "Bash(curl -s http://localhost:8000/api/demos)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Got {len\\(d[\\\\\"demos\\\\\"]\\)} demos'\\); [print\\(f' - {x[\\\\\"slug\\\\\"]} \\({x[\\\\\"available\\\\\"]}\\)'\\) for x in d['demos']]\")",
+      "Bash(netstat -ano)",
+      "Bash(curl -s http://127.0.0.1:8000/api/demos)",
+      "Bash(curl -s http://[::1]:8000/api/demos)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Got {len\\(d[\\\\\"demos\\\\\"]\\)} demos'\\)\")",
+      "Bash(tasklist /FI \"PID eq 21172\")",
+      "Bash(docker exec:*)"
     ]
   }
 }

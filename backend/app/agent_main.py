@@ -7,6 +7,7 @@ and plugin registration) while FastAPI occupies the parent process.
 import json
 import logging
 import sys
+import asyncio
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,13 +25,27 @@ server = AgentServer()
 
 @server.rtc_session(agent_name="gemini-hackathon-agent")
 async def entrypoint(ctx: agents.JobContext):
+    await ctx.connect()
+
     selected_voice = REALTIME_VOICE
+    selected_industry = settings.default_industry
+
+    # Give the user participant a moment to join so token metadata is available.
+    for _ in range(20):
+        if ctx.room.remote_participants:
+            break
+        await asyncio.sleep(0.1)
 
     for participant in ctx.room.remote_participants.values():
         metadata = participant.metadata
         if metadata:
             try:
                 parsed = json.loads(metadata)
+
+                requested_industry = parsed.get("industry")
+                if isinstance(requested_industry, str) and requested_industry.strip():
+                    selected_industry = requested_industry.strip()
+
                 requested_voice = parsed.get("realtimeVoice")
                 if (
                     isinstance(requested_voice, str)
@@ -60,10 +75,10 @@ async def entrypoint(ctx: agents.JobContext):
         ),
     )
 
-    agent = get_agent(settings.default_industry, ctx.room)
+    agent = get_agent(selected_industry, ctx.room)
     logger.info(
         "Dispatching industry='%s' → %s",
-        settings.default_industry,
+        selected_industry,
         type(agent).__name__,
     )
 
@@ -71,8 +86,6 @@ async def entrypoint(ctx: agents.JobContext):
         room=ctx.room,
         agent=agent,
     )
-
-    await ctx.connect()
 
 
 if __name__ == "__main__":

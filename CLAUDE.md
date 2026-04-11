@@ -602,7 +602,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 12 — Public Administration (Comune): Agent + Tools ⬅ PRIORITY
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Persona:** Giulia, Municipal Services AI. Patient, precise, empathetic — bridges the gap between bureaucratic complexity and the citizen who just needs to get things done. Fluent in all 4 languages; especially important for Arabic-speaking immigrant communities navigating Italian municipal services.
 
@@ -1058,7 +1058,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 9 | 4 | [x] | Demo Config System | Foundation | DemoConfig for all 6 industries, replaces Session 8 stubs |
 | 10 | 10 | [x] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
 | 11 | 11 | [x] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
-| **12** | **12** | **[ ]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
+| **12** | **12** | **[x]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
 | **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |
 | 15 | 15 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |

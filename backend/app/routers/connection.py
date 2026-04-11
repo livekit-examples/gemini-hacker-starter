@@ -29,6 +29,7 @@ def _mint_livekit_token(
     participant_name: str,
     room_name: str,
     metadata: str | None = None,
+    room_config: dict[str, Any] | None = None,
 ) -> str:
     """Mint a LiveKit-compatible JWT token using HMAC-SHA256."""
     now = int(time.time())
@@ -49,6 +50,8 @@ def _mint_livekit_token(
     }
     if metadata:
         payload["metadata"] = metadata
+    if room_config:
+        payload["roomConfig"] = room_config
     header_b64 = _b64url_encode(json.dumps(header, separators=(",", ":")).encode())
     payload_b64 = _b64url_encode(json.dumps(payload, separators=(",", ":")).encode())
     signing_input = f"{header_b64}.{payload_b64}".encode()
@@ -67,13 +70,52 @@ def _validate_livekit_settings() -> None:
         raise HTTPException(status_code=503, detail="LIVEKIT_API_SECRET is not configured")
 
 
-def _build_connection_response(language: str | None = None) -> ConnectionDetailsResponse:
+def _extract_agent_name(room_config: dict[str, Any] | None) -> str | None:
+    if not isinstance(room_config, dict):
+        return None
+
+    agents = room_config.get("agents")
+    if not isinstance(agents, list) or not agents:
+        return None
+
+    first_agent = agents[0]
+    if not isinstance(first_agent, dict):
+        return None
+
+    # Accept snake_case and camelCase for client compatibility.
+    raw_name = first_agent.get("agent_name") or first_agent.get("agentName")
+    if not isinstance(raw_name, str):
+        return None
+
+    agent_name = raw_name.strip()
+    return agent_name or None
+
+
+def _build_connection_response(
+    language: str | None = None,
+    industry: str | None = None,
+    voice: str | None = None,
+    room_config: dict[str, Any] | None = None,
+) -> ConnectionDetailsResponse:
     _validate_livekit_settings()
     suffix = random.randint(0, 99_999)
     room_name = f"voice_assistant_room_{suffix}"
     participant_identity = f"voice_assistant_user_{suffix}"
     participant_name = "user"
-    metadata = json.dumps({"preferredLanguage": language}) if language else None
+    metadata_payload: dict[str, str] = {}
+    if language:
+        metadata_payload["preferredLanguage"] = language
+    if industry:
+        metadata_payload["industry"] = industry
+    if voice:
+        metadata_payload["realtimeVoice"] = voice
+
+    metadata = json.dumps(metadata_payload) if metadata_payload else None
+    agent_name = _extract_agent_name(room_config) or settings.agent_name
+    room_config_payload = {
+        "agents": [{"agentName": agent_name}],
+    }
+
     token = _mint_livekit_token(
         api_key=settings.livekit_api_key,
         api_secret=settings.livekit_api_secret,
@@ -81,6 +123,7 @@ def _build_connection_response(language: str | None = None) -> ConnectionDetails
         participant_name=participant_name,
         room_name=room_name,
         metadata=metadata,
+        room_config=room_config_payload,
     )
     return ConnectionDetailsResponse(
         serverUrl=settings.livekit_url,
@@ -92,6 +135,9 @@ def _build_connection_response(language: str | None = None) -> ConnectionDetails
 
 class ConnectionDetailsRequest(BaseModel):
     language: str | None = None
+    industry: str | None = None
+    voice: str | None = None
+    room_config: dict[str, Any] | None = None
 
 
 @router.get("/api/connection-details", response_model=ConnectionDetailsResponse)
@@ -103,4 +149,9 @@ async def connection_details() -> ConnectionDetailsResponse:
 async def connection_details_post(
     body: ConnectionDetailsRequest = ConnectionDetailsRequest(),
 ) -> ConnectionDetailsResponse:
-    return _build_connection_response(language=body.language)
+    return _build_connection_response(
+        language=body.language,
+        industry=body.industry,
+        voice=body.voice,
+        room_config=body.room_config,
+    )

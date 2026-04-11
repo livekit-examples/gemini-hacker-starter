@@ -1,0 +1,255 @@
+[
+  {
+    "service_id": "ANA-001",
+    "name": "Certificato di Nascita",
+    "keywords": ["nascita", "birth", "birth certificate", "certificato nascita", "born", "nato"],
+    "required_documents": [
+      "Documento d'identità valido (carta d'identità o passaporto)",
+      "Codice fiscale",
+      "Modulo di richiesta compilato (disponibile allo sportello)"
+    ],
+    "processing_days": 1,
+    "fee_eur": 16.00,
+    "office": "Ufficio Anagrafe — Sportello 3",
+    "bookable_online": true,
+    "notes": "Il certificato ha validità 6 mesi. È possibile richiedere la versione plurilingue per uso estero."
+  },
+  {
+    "service_id": "ANA-002",
+    "name": "Certificato di Matrimonio",
+    "keywords": ["matrimonio", "marriage", "marriage certificate", "sposato", "sposa", "wed"],
+    "required_documents": [
+      "Documento d'identità valido",
+      "Codice fiscale",
+      "Indicazione dell'atto di matrimonio (comune e anno)"
+    ],
+    "processing_days": 1,
+    "fee_eur": 16.00,
+    "office": "Ufficio di Stato Civile — Sportello 1",
+    "bookable_online": true,
+    "notes": "Per matrimoni celebrati all'estero, presentare il certificato di matrimonio tradotto e apostillato."
+  },
+  {
+    "service_id": "ANA-003",
+    "name": "Certificato di Morte",
+    "keywords": ["morte", "death", "death certificate", "deceduto", "decesso", "deceased"],
+    "required_documents": [
+      "Documento d'identità del richiedente",
+      "Generalità complete del defunto (nome, cognome, data e luogo di nascita)"
+    ],
+    "processing_days": 1,
+    "fee_eur": 16.00,
+    "office": "Ufficio di Stato Civile — Sportello 1",
+    "bookable_online": false,
+    "notes": "Il certificato di morte è esente da bollo per uso successorio. Indicare la finalità al momento della richiesta."
+  },
+  {
+    "service_id": "ANA-004",
+    "name": "Iscrizione Anagrafica (Residenza)",
+    "keywords": ["residenza", "residency", "residency registration", "iscrizione anagrafica", "cambio comune", "trasferimento"],
+    "required_documents": [
+      "Documento d'identità valido",
+      "Codice fiscale",
+      "Contratto di locazione o atto di proprietà dell'immobile",
+      "Modulo di dichiarazione di residenza compilato",
+      "Per cittadini extra-UE: permesso di soggiorno in corso di validità"
+    ],
+    "processing_days": 45,
+    "fee_eur": 0.00,
+    "office": "Ufficio Anagrafe — Sportello 2",
+    "bookable_online": true,
+    "notes": "La polizia municipale effettuerà un sopralluogo entro 45 giorni per verificare la dimora abituale. Servizio gratuito."
+  },
+  {
+    "service_id": "ANA-005",
+    "name": "Cambio di Indirizzo (Cambio Abitazione)",
+    "keywords": ["cambio indirizzo", "change address", "cambio abitazione", "trasloco", "move", "nuovo indirizzo"],
+    "required_documents": [
+      "Documento d'identità valido",
+      "Codice fiscale",
+      "Nuovo contratto di locazione o atto di proprietà",
+      "Modulo di variazione anagrafica"
+    ],
+    "processing_days": 30,
+    "fee_eur": 0.00,
+    "office": "Ufficio Anagrafe — Sportello 2",
+    "bookable_online": true,
+    "notes": "Solo per chi è già iscritto in anagrafe nel comune. Per provenienza da altro comune usare il servizio Iscrizione Anagrafica."
+  },
+  {
+    "service_id": "STA-001",
+    "name": "Cambio di Nome o Cognome",
+    "keywords": ["cambio nome", "name change", "cambio cognome", "surname change", "nome", "cognome"],
+    "required_documents": [
+      "Documento d'identità valido",
+      "Codice fiscale",
+      "Estratto dell'atto di nascita",
+      "Marca da bollo da €16,00",
+      "Domanda motivata in carta libera",
+      "Documentazione a supporto della motivazione (es. sentenza, atti notarili)"
+    ],
+    "processing_days": 90,
+    "fee_eur": 16.00,
+    "office": "Ufficio di Stato Civile — Sportello 1",
+    "bookable_online": false,
+    "notes": "La richiesta viene inoltrata alla Prefettura per approvazione. I tempi possono variare da 3 a 6 mesi."
+  },
+  {
+    "service_id": "STA-002",
+    "name": "Domanda di Cittadinanza Italiana",
+    "keywords": ["cittadinanza", "citizenship", "naturalizzazione", "naturalisation", "italian citizenship", "cittadino italiano"],
+    "required_documents": [
+      "Passaporto in corso di validità",
+      "Permesso di soggiorno UE per soggiornanti di lungo periodo",
+      "Certificato di nascita tradotto e apostillato",
+      "Certificato del casellario giudiziario del paese d'origine",
+      "Certificato penale italiano",
+      "Documentazione redditi (CUD/730 ultimi 3 anni)",
+      "Ricevuta pagamento contributo €250,00"
+    ],
+    "processing_days": 730,
+    "fee_eur": 250.00,
+    "office": "Prefettura — Ufficio Cittadinanza (prenotazione tramite Comune)",
+    "bookable_online": false,
+    "notes": "I tempi di attesa per la cittadinanza per naturalizzazione sono di 2-4 anni. Il Comune offre assistenza nella raccolta documenti."
+  },
+  {
+    "service_id": "PER-001",
+    "name": "Permesso di Costruire (PdC)",
+    "keywords": ["permesso costruire", "building permit", "costruzione", "build", "edificio", "lavori edilizi", "ristrutturazione"],
+    "required_documents": [
+      "Modulo di domanda compilato e firmato dal proprietario",
+      "Relazione tecnica asseverata da tecnico abilitato",
+      "Elaborati grafici (planimetrie, sezioni, prospetti) firmati dal tecnico",
+      "Titolo di proprietà o disponibilità dell'immobile",
+      "Ricevuta versamento diritti di segreteria",
+      "Calcolo degli oneri di urbanizzazione"
+    ],
+    "processing_days": 75,
+    "fee_eur": 350.00,
+    "office": "Ufficio Urbanistica ed Edilizia Privata — Piano 2",
+    "bookable_online": false,
+    "notes": "Il termine di 75 giorni è sospeso in caso di richiesta di integrazione documentale. Obbligatoria la firma di un tecnico abilitato (geometra, architetto o ingegnere)."
+  },
+  {
+    "service_id": "PER-002",
+    "name": "Autorizzazione per Attività Commerciale (SCIA)",
+    "keywords": ["attività commerciale", "commercial permit", "negozio", "shop", "commerce", "scia", "apertura attività", "business permit"],
+    "required_documents": [
+      "Modulo SCIA compilato tramite SUAP",
+      "Documento d'identità del titolare",
+      "Codice fiscale e Partita IVA",
+      "Visura camerale aggiornata",
+      "Planimetria del locale (con destinazione d'uso)",
+      "Dichiarazione di conformità impianti",
+      "Locandina/insegna (se prevista)"
+    ],
+    "processing_days": 60,
+    "fee_eur": 120.00,
+    "office": "SUAP — Sportello Unico Attività Produttive",
+    "bookable_online": true,
+    "notes": "La SCIA commerciale consente l'avvio immediato dell'attività sotto la responsabilità del dichiarante. Il Comune verificherà i requisiti entro 60 giorni."
+  },
+  {
+    "service_id": "PER-003",
+    "name": "Occupazione Suolo Pubblico (Dehors)",
+    "keywords": ["dehors", "outdoor seating", "suolo pubblico", "tavolini", "pedana", "gazebo", "outdoor permit", "terrasse"],
+    "required_documents": [
+      "Modulo di domanda",
+      "Planimetria in scala dell'area richiesta",
+      "Descrizione degli arredi e strutture previste",
+      "Fotografia del fronte del locale",
+      "Pagamento COSAP (Canone di Occupazione Spazi e Aree Pubbliche)"
+    ],
+    "processing_days": 30,
+    "fee_eur": 80.00,
+    "office": "Ufficio Commercio e Attività Produttive",
+    "bookable_online": true,
+    "notes": "Il canone COSAP viene calcolato in base ai metri quadrati e alla categoria della zona. L'autorizzazione ha durata annuale e va rinnovata."
+  },
+  {
+    "service_id": "TRA-001",
+    "name": "Contrassegno Invalidi (Parcheggio Disabili)",
+    "keywords": ["disabili", "disabled parking", "contrassegno invalidi", "handicap", "parcheggio disabili", "blue badge", "pass disabili"],
+    "required_documents": [
+      "Domanda in carta libera",
+      "Documento d'identità valido",
+      "Codice fiscale",
+      "Certificazione medica rilasciata dalla ASL (capacità di deambulazione ridotta)",
+      "2 fotografie formato tessera"
+    ],
+    "processing_days": 30,
+    "fee_eur": 0.00,
+    "office": "Ufficio Anagrafe — Sportello Disabilità",
+    "bookable_online": true,
+    "notes": "Il contrassegno ha durata 5 anni per i casi permanenti. Il rinnovo richiede nuova certificazione medica ASL. Servizio gratuito."
+  },
+  {
+    "service_id": "TRA-002",
+    "name": "Pass ZTL (Zona a Traffico Limitato)",
+    "keywords": ["ztl", "zona traffico limitato", "limited traffic zone", "pass ztl", "accesso ztl", "telecamera ztl", "centro storico"],
+    "required_documents": [
+      "Modulo di domanda",
+      "Documento d'identità",
+      "Codice fiscale",
+      "Libretto di circolazione del veicolo",
+      "Documentazione attestante il diritto all'accesso (es. residenza in ZTL, attività commerciale)"
+    ],
+    "processing_days": 15,
+    "fee_eur": 50.00,
+    "office": "Ufficio Mobilità e Traffico",
+    "bookable_online": true,
+    "notes": "Il pass è legato alla targa del veicolo. In caso di cambio veicolo è necessario aggiornare il permesso. Valido per 12 mesi."
+  },
+  {
+    "service_id": "TRA-003",
+    "name": "Dichiarazione di Demolizione Veicolo",
+    "keywords": ["demolizione veicolo", "vehicle scrappage", "rottamazione", "scrap car", "cancellazione veicolo", "demolire auto"],
+    "required_documents": [
+      "Carta di circolazione (libretto)",
+      "Certificato di proprietà (o foglio complementare)",
+      "Documento d'identità del proprietario",
+      "Codice fiscale"
+    ],
+    "processing_days": 5,
+    "fee_eur": 45.00,
+    "office": "Ufficio Motorizzazione — collabora con ACI/PRA",
+    "bookable_online": false,
+    "notes": "La cancellazione dal PRA avviene tramite un centro di demolizione autorizzato. Il Comune fornisce assistenza per la compilazione della pratica."
+  },
+  {
+    "service_id": "SOC-001",
+    "name": "Iscrizione al Servizio di Raccolta Rifiuti (TARI)",
+    "keywords": ["tari", "rifiuti", "waste collection", "spazzatura", "immondizia", "garbage", "raccolta differenziata", "trash", "waste"],
+    "required_documents": [
+      "Modulo di denuncia TARI compilato",
+      "Documento d'identità",
+      "Codice fiscale",
+      "Contratto di locazione o atto di proprietà",
+      "Planimetria catastale dell'immobile (se disponibile)"
+    ],
+    "processing_days": 10,
+    "fee_eur": 0.00,
+    "office": "Ufficio Tributi — TARI Sportello 4",
+    "bookable_online": true,
+    "notes": "La TARI si calcola in base ai metri quadrati e alla composizione del nucleo familiare. La denuncia va presentata entro 90 giorni dall'inizio dell'occupazione."
+  },
+  {
+    "service_id": "SOC-002",
+    "name": "Assistenza Dichiarazione ISEE",
+    "keywords": ["isee", "dichiarazione isee", "dsu", "reddito", "income declaration", "prestazioni sociali", "agevolazioni", "bonus"],
+    "required_documents": [
+      "Documento d'identità di tutti i componenti del nucleo familiare",
+      "Codice fiscale di tutti i componenti",
+      "CU (Certificazione Unica) o modello 730 dell'anno precedente",
+      "Estratto conto bancario/postale (saldo al 31/12 anno precedente)",
+      "Documentazione patrimonio immobiliare (visure catastali)",
+      "Per titolari di partita IVA: ultima dichiarazione dei redditi completa"
+    ],
+    "processing_days": 5,
+    "fee_eur": 0.00,
+    "office": "Ufficio Servizi Sociali — CAF convenzionato",
+    "bookable_online": true,
+    "notes": "Il servizio di assistenza CAF è gratuito. L'ISEE ha validità dall'1 gennaio al 31 dicembre dell'anno in corso. Necessario per accedere a bonus, agevolazioni e servizi sociali."
+  }
+]
