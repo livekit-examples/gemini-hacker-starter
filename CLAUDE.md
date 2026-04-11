@@ -641,7 +641,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 13 — Public Administration (Comune): Frontend Panel
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Scope:**
 - `components/dashboard/panels/ComunePanel.tsx`:
@@ -1110,7 +1110,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 10 | 10 | [x] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
 | 11 | 11 | [x] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
 | **12** | **12** | **[x]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
-| **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
+| **13** | **13** | **[x]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |
 | 15 | 15 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
 | 16 | 16 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
