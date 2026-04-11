@@ -81,7 +81,19 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
     }
   };
 
-  const connectionState = isConnected ? 'connected' : 'connecting';
+  const [isDisconnected, setIsDisconnected] = useState(false);
+
+  const connectionState = isConnected ? 'connected' : isDisconnected ? 'idle' : 'connecting';
+
+  const handleDisconnect = () => {
+    end();
+    setIsDisconnected(true);
+  };
+
+  const handleConnect = () => {
+    setIsDisconnected(false);
+    start();
+  };
 
   const handleReset = () => {
     end();
@@ -97,7 +109,8 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
       microphones={microphones}
       selectedMicrophoneId={selectedMicrophoneId}
       onMicrophoneChange={handleMicrophoneChange}
-      onDisconnect={end}
+      onDisconnect={handleDisconnect}
+      onConnect={handleConnect}
       onReset={handleReset}
     />
   );

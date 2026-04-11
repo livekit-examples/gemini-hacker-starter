@@ -12,8 +12,14 @@ export function VoiceActivity({ className }: { className?: string }) {
   const isActive = state === 'listening' || state === 'thinking' || state === 'speaking';
 
   const micPublication = localParticipant.getTrackPublication(Track.Source.Microphone);
-  const micTrack = micPublication?.track;
-  const bands = useMultibandTrackVolume(micTrack, {
+  const micTrackRef = micPublication
+    ? {
+        source: Track.Source.Microphone,
+        participant: localParticipant,
+        publication: micPublication,
+      }
+    : undefined;
+  const bands = useMultibandTrackVolume(micTrackRef, {
     bands: 5,
     loPass: 80,
     hiPass: 280,

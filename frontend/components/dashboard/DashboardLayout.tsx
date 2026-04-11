@@ -36,6 +36,7 @@ interface DashboardLayoutProps {
   selectedMicrophoneId?: string;
   onMicrophoneChange?: (deviceId: string) => void;
   onDisconnect?: () => void;
+  onConnect?: () => void;
   onReset?: () => void;
   className?: string;
 }
@@ -49,6 +50,7 @@ export function DashboardLayout({
   selectedMicrophoneId,
   onMicrophoneChange,
   onDisconnect = () => {},
+  onConnect = () => {},
   onReset = () => {},
   className,
 }: DashboardLayoutProps) {
@@ -98,7 +100,9 @@ export function DashboardLayout({
         <ToolOutputPanel className="flex-1 min-h-[200px]" />
         <SessionControls
           languages={config.supported_languages}
+          connectionState={connectionState}
           onDisconnect={onDisconnect}
+          onConnect={onConnect}
           onReset={onReset}
           selectedLanguage={selectedLanguage}
           onLanguageChange={onLanguageChange}

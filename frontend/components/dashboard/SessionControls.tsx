@@ -6,7 +6,9 @@ import type { LanguageInfo } from './DashboardLayout';
 
 interface SessionControlsProps {
   languages: LanguageInfo[];
+  connectionState?: 'connected' | 'connecting' | 'idle';
   onDisconnect: () => void;
+  onConnect?: () => void;
   onReset: () => void;
   selectedLanguage?: string;
   onLanguageChange?: (code: string) => void;
@@ -18,7 +20,9 @@ interface SessionControlsProps {
 
 export function SessionControls({
   languages,
+  connectionState = 'connecting',
   onDisconnect,
+  onConnect,
   onReset,
   selectedLanguage = 'en',
   onLanguageChange,
@@ -87,14 +91,25 @@ export function SessionControls({
       </div>
 
       <div className="flex flex-col gap-2">
-        <Button
-          variant="outline"
-          data-testid="disconnect-button"
-          onClick={onDisconnect}
-          className="w-full justify-center"
-        >
-          Disconnect
-        </Button>
+        {connectionState === 'idle' ? (
+          <Button
+            variant="primary"
+            data-testid="connect-button"
+            onClick={onConnect}
+            className="w-full justify-center"
+          >
+            Connect
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            data-testid="disconnect-button"
+            onClick={onDisconnect}
+            className="w-full justify-center"
+          >
+            Disconnect
+          </Button>
+        )}
         <Button
           variant="muted"
           data-testid="reset-button"
