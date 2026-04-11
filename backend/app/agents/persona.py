@@ -6,6 +6,8 @@ attributes *before* calling ``super().__init__(room)`` so that
 """
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
 from typing import Any
 
@@ -84,3 +86,24 @@ class PersonaAgent(BaseAgent):
         )
         self._system_prompt = self.build_system_prompt()
         logger.info("Switched language to %s", self.language_profile.code)
+
+    async def _publish_tool_output(self, tool_name: str, result: dict) -> None:
+        """Publish a tool result to the LiveKit 'tool-output' data channel.
+
+        The frontend's ToolOutputPanel listens on this topic and renders
+        a structured card for each message received.
+        """
+        try:
+            payload = json.dumps({"type": tool_name, **result}).encode()
+            await asyncio.wait_for(
+                self._room.local_participant.publish_data(payload, topic="tool-output"),
+                timeout=1.0,
+            )
+            logger.debug("Published tool output: %s", tool_name)
+        except TimeoutError:
+            logger.warning(
+                "Timed out publishing tool output for '%s'; continuing without UI payload",
+                tool_name,
+            )
+        except Exception as exc:
+            logger.warning("Failed to publish tool output for '%s': %s", tool_name, exc)

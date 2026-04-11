@@ -7,12 +7,13 @@ and the citizen who just needs to get things done.
 from __future__ import annotations
 
 from livekit import rtc
+from livekit.agents import RunContext, function_tool
 
 from app.agents.persona import PersonaAgent
 from app.tools.comune_tools import (
-    book_appointment,
-    check_application_status,
-    lookup_service_requirements,
+    book_appointment as _book_appointment,
+    check_application_status as _check_application_status,
+    lookup_service_requirements as _lookup_service_requirements,
 )
 
 
@@ -48,6 +49,66 @@ class ComuneAgent(PersonaAgent):
         super().__init__(room=room)
 
     def _register_tools(self) -> None:
-        self.register_tool(lookup_service_requirements)
-        self.register_tool(check_application_status)
-        self.register_tool(book_appointment)
+        self.register_tool(self.lookup_service_requirements)
+        self.register_tool(self.check_application_status)
+        self.register_tool(self.book_appointment)
+
+    @function_tool()
+    async def lookup_service_requirements(
+        self,
+        context: RunContext,
+        service_name: str,
+    ) -> dict:
+        """Look up required documents and details for a municipal service.
+
+        Use this whenever a citizen asks what they need to do or bring for any
+        municipal service (residency, permits, certificates, social services, etc.).
+
+        Args:
+            service_name: Name or keyword for the service, e.g. "residenza",
+                          "carta d'identità", "permesso di costruire".
+        """
+        result = _lookup_service_requirements(service_name)
+        await self._publish_tool_output("lookup_service_requirements", result)
+        return result
+
+    @function_tool()
+    async def check_application_status(
+        self,
+        context: RunContext,
+        application_id: str,
+    ) -> dict:
+        """Retrieve the current status of a submitted municipal application.
+
+        Use this when a citizen provides an application ID and wants to know
+        whether their request has been approved, rejected, or is still pending.
+
+        Args:
+            application_id: The application reference number, e.g. "APP-2024-ANA-00341".
+        """
+        result = _check_application_status(application_id)
+        await self._publish_tool_output("check_application_status", result)
+        return result
+
+    @function_tool()
+    async def book_appointment(
+        self,
+        context: RunContext,
+        service: str,
+        citizen_name: str,
+        preferred_date: str,
+    ) -> dict:
+        """Book an appointment for a municipal service that supports online booking.
+
+        Always call lookup_service_requirements first to confirm the service is
+        bookable online before calling this. If it is not bookable online, do not
+        call this tool — instead inform the citizen of the walk-in office and hours.
+
+        Args:
+            service: The service name or keyword (must match a known service).
+            citizen_name: Full name of the citizen making the appointment.
+            preferred_date: Requested date in ISO format (YYYY-MM-DD).
+        """
+        result = _book_appointment(service, citizen_name, preferred_date)
+        await self._publish_tool_output("book_appointment", result)
+        return result

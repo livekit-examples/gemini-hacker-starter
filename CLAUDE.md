@@ -182,6 +182,7 @@ LiveKit brand artifacts to strip: `/lk-logo.svg`, `/lk-logo-dark.svg`, all `lk-*
 7. Zero LiveKit branding visible in the UI at any point after Session 6.
 8. New personas are added by subclassing `PersonaAgent` + registering in `registry.py` only.
 9. Every industry `DemoConfig` ships a `demo_scenarios` list (model: `DemoScenario { title, description, steps: list[str] }`). Each scenario is a realistic multi-turn journey: a one-line context description and 2–4 ordered prompts the presenter speaks aloud. These are rendered live in the dashboard's `DemoGuidePanel` (left column, below `PersonaCard`) — collapsible cards the user expands during the session. Minimum 4 scenarios per industry, covering all registered tools and at least one failure/edge-case path.
+10. Full website localization is mandatory: all global UI copy (nav, footer, landing, dashboard chrome, buttons, empty/loading/error states, metadata text) must be translated for `en`, `it`, `ar-EG`, and `ar-AE`; no hardcoded user-facing strings outside localization catalogs.
 
 ---
 
@@ -1043,6 +1044,54 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ---
 
+## PHASE 7 — Full Website Localization (Session 28)
+
+---
+
+### SESSION 28 — End-to-End Website Localization
+
+**Status:** `[ ] Not started`
+
+**Goal:** The entire EXODIA Voice Intelligence web experience is localization-complete in all 4 supported languages (`en`, `it`, `ar-EG`, `ar-AE`) with consistent routing, translation coverage, and RTL correctness.
+
+**Scope:**
+- Frontend i18n framework: implement a single localization layer (for example `next-intl`) with language dictionaries under `frontend/messages/` for all 4 locales.
+- Locale routing and persistence:
+  - Add locale-aware routes (`/[locale]/...`) for landing and demo pages.
+  - Auto-detect initial locale from user preference or `Accept-Language` with fallback to `en`.
+  - Persist selected locale across landing → dashboard → reconnect flows.
+- String externalization:
+  - Move all static UI text to translation keys: nav, footer, hero, demo cards, dashboard labels, controls, status text, toasts, form labels, loading/empty/error states, and Open Graph metadata strings.
+  - Keep backend-generated business data dynamic (not duplicated in dictionaries).
+- Locale-aware formatting:
+  - Standardize `Intl` usage for date/time/number/currency formatting per locale.
+  - Ensure Italian and Arabic punctuation/word-order reads naturally (not literal machine-ordered English).
+- RTL hardening:
+  - Apply document-level `dir` and component-level spacing/alignment mirroring for Arabic locales across all pages, not dashboard-only.
+  - Verify mixed-content rendering (Arabic UI + Latin IDs/monospace fields) remains legible.
+- Backend alignment:
+  - `/api/config` and `/api/demos` provide localization-ready labels where needed (or stable keys consumed by frontend catalogs).
+  - Add explicit locale validation and fallback behavior for unsupported locale codes.
+- Developer workflow:
+  - Add translation key conventions, lint/check script for missing keys, and docs at `docs/localization.md`.
+
+**E2E Tests:**
+- Playwright `test_localization.spec.ts`:
+  - Landing and dashboard load successfully for each locale path (`/en`, `/it`, `/ar-EG`, `/ar-AE`).
+  - Switching locale updates all global chrome text (nav, footer, key CTAs) without stale English remnants.
+  - Arabic locales set `dir="rtl"` at the app shell and preserve readable transcript/tool cards.
+  - Locale selection persists after page refresh and after connect/disconnect.
+- Frontend unit tests:
+  - Key coverage test: all locales expose the same required translation keys.
+  - No unresolved key placeholders rendered in UI.
+- Backend tests (`backend/tests/test_locale_support.py`):
+  - Unsupported locale gracefully falls back to default locale.
+  - Locale-related config fields return valid structures for all 4 locales.
+
+**Exit Criterion:** All localization tests green. Manual walkthrough confirms no untranslated global UI strings in any of the 4 locales. Arabic layouts are RTL-correct across landing and dashboard.
+
+---
+
 ## Session Summary
 
 > **Agent instruction:** After completing any session, update the status column below — change `[ ]` to `[x]` for that session. Before starting a new session, scan this table to confirm which sessions are already done so you never re-implement completed work.
@@ -1076,3 +1125,4 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 25 | 25 | [ ] | Landing Polish + GSAP + Carousel | Polish | Animations, snap carousel, marquee, meta tags |
 | 26 | 26 | [ ] | Production Hardening | Production | Rate limiting, secrets audit, load test |
 | 27 | 27 | [ ] | Mobile Responsiveness | Mobile | 375px layouts, tap targets, Lighthouse ≥ 90 |
+| 28 | 28 | [ ] | End-to-End Website Localization | Localization | Full-site i18n, locale routing, coverage tests, RTL hardening |

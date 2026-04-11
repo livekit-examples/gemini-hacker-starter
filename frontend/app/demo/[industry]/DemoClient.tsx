@@ -82,12 +82,14 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
   };
 
   const [isDisconnected, setIsDisconnected] = useState(false);
+  const [toolOutputResetVersion, setToolOutputResetVersion] = useState(0);
 
   const connectionState = isConnected ? 'connected' : isDisconnected ? 'idle' : 'connecting';
 
   const handleDisconnect = () => {
     end();
     setIsDisconnected(true);
+    setToolOutputResetVersion((prev) => prev + 1);
   };
 
   const handleConnect = () => {
@@ -97,6 +99,7 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
 
   const handleReset = () => {
     end();
+    setToolOutputResetVersion((prev) => prev + 1);
     router.push('/');
   };
 
@@ -112,6 +115,7 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
       onDisconnect={handleDisconnect}
       onConnect={handleConnect}
       onReset={handleReset}
+      toolOutputResetVersion={toolOutputResetVersion}
     />
   );
 }

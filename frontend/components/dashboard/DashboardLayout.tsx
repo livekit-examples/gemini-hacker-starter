@@ -40,6 +40,7 @@ interface DashboardLayoutProps {
   onDisconnect?: () => void;
   onConnect?: () => void;
   onReset?: () => void;
+  toolOutputResetVersion?: number;
   className?: string;
 }
 
@@ -54,6 +55,7 @@ export function DashboardLayout({
   onDisconnect = () => {},
   onConnect = () => {},
   onReset = () => {},
+  toolOutputResetVersion = 0,
   className,
 }: DashboardLayoutProps) {
   const currentLang = config.supported_languages.find((l) => l.code === selectedLanguage);
@@ -64,14 +66,14 @@ export function DashboardLayout({
       data-testid="dashboard-layout"
       dir={isRtl ? 'rtl' : 'ltr'}
       className={cn(
-        'flex flex-col lg:flex-row gap-4 px-4 pt-24 pb-6 min-h-screen',
+        'flex flex-col lg:flex-row gap-4 px-4 pt-24 pb-6 lg:h-screen lg:overflow-hidden',
         className
       )}
     >
       {/* ── Left panel — 280px ──────────────────────────────────────── */}
       <div
         data-testid="dashboard-left"
-        className="w-full lg:w-[280px] lg:flex-shrink-0 flex flex-col gap-4"
+        className="w-full lg:w-[280px] lg:flex-shrink-0 flex flex-col gap-4 lg:h-full lg:overflow-hidden"
       >
         <PersonaCard
           initials={config.persona_initials}
@@ -81,28 +83,31 @@ export function DashboardLayout({
           language={currentLang ? `${currentLang.flag} ${currentLang.code.toUpperCase()}` : selectedLanguage.toUpperCase()}
         />
         {config.demo_scenarios?.length ? (
-          <DemoGuidePanel scenarios={config.demo_scenarios} className="overflow-y-auto max-h-[60vh]" />
+          <DemoGuidePanel scenarios={config.demo_scenarios} className="flex-1 overflow-y-auto min-h-0" />
         ) : null}
       </div>
 
       {/* ── Center panel — flex-1 ────────────────────────────────────── */}
       <div
         data-testid="dashboard-center"
-        className="flex-1 flex flex-col gap-4 min-w-0"
+        className="flex-1 flex flex-col gap-4 min-w-0 lg:h-full lg:overflow-hidden"
       >
         {/* Voice activity ring */}
         <VoiceActivity className="h-32 flex-shrink-0" />
 
-        {/* Live transcript — fills remaining space */}
-        <TranscriptPanel className="flex-1 min-h-[200px]" isRtl={isRtl} />
+        {/* Live transcript — fills remaining space and scrolls */}
+        <TranscriptPanel className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none" isRtl={isRtl} />
       </div>
 
       {/* ── Right panel — 320px ──────────────────────────────────────── */}
       <div
         data-testid="dashboard-right"
-        className="w-full lg:w-[320px] lg:flex-shrink-0 flex flex-col gap-4"
+        className="w-full lg:w-[320px] lg:flex-shrink-0 flex flex-col gap-4 lg:h-full lg:overflow-hidden"
       >
-        <ToolOutputPanel className="flex-1 min-h-[200px]" />
+        <ToolOutputPanel
+          className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
+          resetVersion={toolOutputResetVersion}
+        />
         <SessionControls
           languages={config.supported_languages}
           connectionState={connectionState}

@@ -29,7 +29,8 @@
       "Bash(curl -s http://[::1]:8000/api/demos)",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Got {len\\(d[\\\\\"demos\\\\\"]\\)} demos'\\)\")",
       "Bash(tasklist /FI \"PID eq 21172\")",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(python3 -c \"from livekit.agents import Agent; import inspect; print\\(inspect.signature\\(Agent.__init__\\)\\)\")"
     ]
   }
 }

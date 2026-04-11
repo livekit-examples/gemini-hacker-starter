@@ -36,9 +36,18 @@ function ToolCard({ output }: { output: ToolOutput }) {
   );
 }
 
-export function ToolOutputPanel({ className }: { className?: string }) {
+interface ToolOutputPanelProps {
+  className?: string;
+  resetVersion?: number;
+}
+
+export function ToolOutputPanel({ className, resetVersion = 0 }: ToolOutputPanelProps) {
   const [outputs, setOutputs] = useState<ToolOutput[]>([]);
   const room = useRoomContext();
+
+  useEffect(() => {
+    setOutputs([]);
+  }, [resetVersion]);
 
   // Listen to LiveKit data messages on "tool-output" topic
   useEffect(() => {

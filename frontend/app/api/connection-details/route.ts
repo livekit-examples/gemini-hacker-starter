@@ -10,6 +10,7 @@ type ConnectionDetails = {
 };
 
 const ALLOWED_REALTIME_VOICES = new Set(['Aoede', 'Kore', 'Puck', 'Charon', 'Fenrir']);
+const FALLBACK_AGENT_NAME = 'gemini-hackathon-agent';
 
 // NOTE: you are expected to define the following environment variables in `.env.local`:
 const API_KEY = process.env.LIVEKIT_API_KEY;
@@ -32,9 +33,16 @@ export async function POST(req: Request) {
       throw new Error('LIVEKIT_API_SECRET is not defined');
     }
 
-    // Parse agent configuration from request body, falling back to AGENT_NAME env var
+    // Parse agent configuration from request body, falling back to env/default.
     const body = await req.json().catch(() => ({}));
-    const agentName: string = body?.room_config?.agents?.[0]?.agent_name ?? DEFAULT_AGENT_NAME;
+    const agentName =
+      parseAgentName(body) ??
+      (typeof DEFAULT_AGENT_NAME === 'string' && DEFAULT_AGENT_NAME.trim().length > 0
+        ? DEFAULT_AGENT_NAME.trim()
+        : FALLBACK_AGENT_NAME);
+
+    const preferredLanguage = parseString(body?.language);
+    const industry = parseString(body?.industry);
     const requestedVoice = parseRequestedVoice(body?.voice);
 
     // Generate participant token
@@ -42,7 +50,19 @@ export async function POST(req: Request) {
     const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10_000)}`;
     const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
 
-    const metadata = requestedVoice ? JSON.stringify({ realtimeVoice: requestedVoice }) : undefined;
+    const metadataPayload: Record<string, string> = {};
+    if (preferredLanguage) {
+      metadataPayload.preferredLanguage = preferredLanguage;
+    }
+    if (industry) {
+      metadataPayload.industry = industry;
+    }
+    if (requestedVoice) {
+      metadataPayload.realtimeVoice = requestedVoice;
+    }
+    const metadata = Object.keys(metadataPayload).length
+      ? JSON.stringify(metadataPayload)
+      : undefined;
 
     const participantToken = await createParticipantToken(
       { identity: participantIdentity, name: participantName, metadata },
@@ -67,6 +87,43 @@ export async function POST(req: Request) {
       return new NextResponse(error.message, { status: 500 });
     }
   }
+}
+
+function parseAgentName(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined;
+  }
+
+  const roomConfig = (body as { room_config?: unknown; roomConfig?: unknown }).room_config
+    ?? (body as { room_config?: unknown; roomConfig?: unknown }).roomConfig;
+  if (!roomConfig || typeof roomConfig !== 'object') {
+    return undefined;
+  }
+
+  const agents = (roomConfig as { agents?: unknown }).agents;
+  if (!Array.isArray(agents) || agents.length === 0) {
+    return undefined;
+  }
+
+  const first = agents[0];
+  if (!first || typeof first !== 'object') {
+    return undefined;
+  }
+
+  const candidate =
+    (first as { agent_name?: unknown; agentName?: unknown }).agent_name
+    ?? (first as { agent_name?: unknown; agentName?: unknown }).agentName;
+
+  return parseString(candidate);
+}
+
+function parseString(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }
 
 function parseRequestedVoice(value: unknown): string | undefined {
