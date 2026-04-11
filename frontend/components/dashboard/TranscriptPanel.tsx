@@ -22,7 +22,12 @@ function messageToEntry(m: ReceivedMessage): TestEntry {
   };
 }
 
-export function TranscriptPanel({ className }: { className?: string }) {
+interface TranscriptPanelProps {
+  className?: string;
+  isRtl?: boolean;
+}
+
+export function TranscriptPanel({ className, isRtl = false }: TranscriptPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [testEntries, setTestEntries] = useState<TestEntry[]>([]);
 
@@ -79,9 +84,10 @@ export function TranscriptPanel({ className }: { className?: string }) {
           <div
             key={i}
             data-testid="transcript-entry"
+            dir={isRtl ? 'rtl' : 'ltr'}
             className="animate-in fade-in duration-300"
           >
-            <div className="flex items-center gap-2 mb-1">
+            <div className={cn('flex items-center gap-2 mb-1', isRtl && 'flex-row-reverse')}>
               <span className="font-mono text-[10px] text-accent uppercase tracking-widest">
                 {entry.speaker}
               </span>
@@ -89,7 +95,12 @@ export function TranscriptPanel({ className }: { className?: string }) {
                 {formatTime(entry.timestamp)}
               </span>
             </div>
-            <p className="font-sans text-sm text-ghost/80 leading-relaxed">{entry.text}</p>
+            <p className={cn(
+              'font-sans text-sm text-ghost/80 leading-relaxed',
+              isRtl && 'text-right'
+            )}>
+              {entry.text}
+            </p>
           </div>
         ))}
       </div>

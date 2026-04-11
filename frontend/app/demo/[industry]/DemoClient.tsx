@@ -11,15 +11,16 @@ import { useAgentErrors } from '@/hooks/useAgentErrors';
 
 interface DemoDashboardProps {
   config: DemoConfig;
+  selectedLanguage: string;
+  onLanguageChange: (code: string) => void;
 }
 
 /**
  * Inner dashboard — must render inside AgentSessionProvider so LiveKit
  * hooks (useSessionContext, useRoomContext, useVoiceAssistant) are available.
  */
-function InnerDemoDashboard({ config }: DemoDashboardProps) {
+function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: DemoDashboardProps) {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const { isConnected, start, end } = useSessionContext();
 
   useAgentErrors();
@@ -41,7 +42,7 @@ function InnerDemoDashboard({ config }: DemoDashboardProps) {
       config={config}
       connectionState={connectionState}
       selectedLanguage={selectedLanguage}
-      onLanguageChange={setSelectedLanguage}
+      onLanguageChange={onLanguageChange}
       onDisconnect={end}
       onReset={handleReset}
     />
@@ -50,9 +51,12 @@ function InnerDemoDashboard({ config }: DemoDashboardProps) {
 
 interface DemoClientProps {
   config: DemoConfig;
+  initialLanguage?: string;
 }
 
-export function DemoClient({ config }: DemoClientProps) {
+export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) {
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
+
   const tokenSource = useMemo(() => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
     const endpoint = backendUrl
@@ -63,19 +67,23 @@ export function DemoClient({ config }: DemoClientProps) {
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ language: initialLanguage }),
       });
       if (!res.ok) throw new Error(`Connection details fetch failed: ${res.status}`);
       return res.json();
     });
-  }, []);
+  }, [initialLanguage]);
 
   const session = useSession(tokenSource);
 
   return (
     <AgentSessionProvider session={session}>
       <StartAudioButton label="Start Audio" />
-      <InnerDemoDashboard config={config} />
+      <InnerDemoDashboard
+        config={config}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={setSelectedLanguage}
+      />
     </AgentSessionProvider>
   );
 }

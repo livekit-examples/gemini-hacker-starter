@@ -2,15 +2,10 @@
 
 import { cn } from '@/lib/shadcn/utils';
 import { Button } from '@/components/design-system/Button';
-
-const LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'it', label: 'Italian' },
-  { code: 'ar-EG', label: 'Arabic (Egyptian)' },
-  { code: 'ar-AE', label: 'Arabic (Emirati)' },
-];
+import type { LanguageInfo } from './DashboardLayout';
 
 interface SessionControlsProps {
+  languages: LanguageInfo[];
   onDisconnect: () => void;
   onReset: () => void;
   selectedLanguage?: string;
@@ -19,6 +14,7 @@ interface SessionControlsProps {
 }
 
 export function SessionControls({
+  languages,
   onDisconnect,
   onReset,
   selectedLanguage = 'en',
@@ -52,9 +48,9 @@ export function SessionControls({
           className="w-full bg-[#05050A] border border-graphite rounded-[2rem] px-4 py-2.5 font-mono text-xs text-ghost/70 focus:outline-none focus:border-accent/50 cursor-pointer"
           aria-label="Language selector"
         >
-          {LANGUAGES.map((lang) => (
+          {languages.map((lang) => (
             <option key={lang.code} value={lang.code}>
-              {lang.label}
+              {lang.flag} {lang.display_name}
             </option>
           ))}
         </select>

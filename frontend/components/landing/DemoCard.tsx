@@ -1,5 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { ActivePill, Avatar, Button, Card, Tag } from '@/components/design-system';
+import type { LanguageInfo } from '@/components/dashboard/DashboardLayout';
 
 export interface DemoCardData {
   slug: string;
@@ -10,7 +14,7 @@ export interface DemoCardData {
   value_prop: string;
   accent: string;
   available: boolean;
-  supported_languages: string[];
+  supported_languages: LanguageInfo[];
   disclaimer?: Record<string, string>;
 }
 
@@ -24,6 +28,12 @@ export function DemoCard({
   available,
   supported_languages,
 }: DemoCardData) {
+  const [selectedLang, setSelectedLang] = useState(
+    supported_languages[0]?.code ?? 'en'
+  );
+
+  const demoHref = `/demo/${slug}?lang=${selectedLang}`;
+
   return (
     <Card data-testid="demo-card" className="flex flex-col gap-5">
       {/* Persona header */}
@@ -48,19 +58,36 @@ export function DemoCard({
       {/* Value prop */}
       <p className="font-sans text-sm text-ghost/70 leading-relaxed flex-1">{value_prop}</p>
 
-      {/* Language tags */}
-      <div className="flex flex-wrap gap-1.5">
-        {supported_languages.map((lang) => (
-          <Tag key={lang} data-testid="language-tag">
-            {lang}
-          </Tag>
-        ))}
-      </div>
+      {/* Language selector */}
+      {supported_languages.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor={`lang-${slug}`}
+            className="font-mono text-[9px] text-ghost/40 uppercase tracking-widest"
+          >
+            Language
+          </label>
+          <select
+            id={`lang-${slug}`}
+            data-testid="demo-card-language-selector"
+            value={selectedLang}
+            onChange={(e) => setSelectedLang(e.target.value)}
+            className="w-full bg-[#05050A] border border-graphite rounded-[2rem] px-3 py-2 font-mono text-[11px] text-ghost/70 focus:outline-none focus:border-accent/50 cursor-pointer"
+            aria-label={`Language for ${name} demo`}
+          >
+            {supported_languages.map((lang) => (
+              <option key={lang.code} value={lang.code} data-testid="language-tag">
+                {lang.flag} {lang.display_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* CTA */}
       <div className="mt-auto pt-1">
         {available ? (
-          <Link href={`/demo/${slug}`} aria-label={`View ${name} demo`}>
+          <Link href={demoHref} aria-label={`View ${name} demo`}>
             <ActivePill label="View Demo" />
           </Link>
         ) : (

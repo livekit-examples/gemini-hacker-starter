@@ -37,7 +37,8 @@ def test_available_is_bool(slug):
 
 @pytest.mark.parametrize("slug", sorted(EXPECTED_SLUGS))
 def test_supported_languages_contains_all_four(slug):
-    langs = set(DEMO_CONFIGS[slug].supported_languages)
+    # supported_languages is now a list of LanguageInfo objects — extract codes
+    langs = {li.code for li in DEMO_CONFIGS[slug].supported_languages}
     assert langs == EXPECTED_LANGUAGES, (
         f"{slug}: expected {EXPECTED_LANGUAGES}, got {langs}"
     )

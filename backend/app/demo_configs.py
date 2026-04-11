@@ -1,6 +1,29 @@
 from pydantic import BaseModel
 
 
+class LanguageInfo(BaseModel):
+    code: str
+    display_name: str
+    flag: str
+    is_rtl: bool
+
+
+def _lang(code: str) -> LanguageInfo:
+    """Build a LanguageInfo from the canonical language profiles."""
+    from app.languages.profiles import PROFILES  # local import to avoid circular
+
+    p = PROFILES[code]
+    return LanguageInfo(
+        code=p.code,
+        display_name=p.display_name,
+        flag=p.flag,
+        is_rtl=p.is_rtl,
+    )
+
+
+_ALL_LANGUAGES: list[LanguageInfo] = [_lang(c) for c in ("en", "it", "ar-EG", "ar-AE")]
+
+
 class DemoConfig(BaseModel):
     # Identity
     slug: str
@@ -13,8 +36,8 @@ class DemoConfig(BaseModel):
     value_prop: str
     accent: str
     available: bool
-    # Languages
-    supported_languages: list[str]
+    # Languages — full LanguageInfo objects, not raw codes
+    supported_languages: list[LanguageInfo]
     # Dental only — keyed by language code
     disclaimer: dict[str, str] = {}
 
@@ -32,7 +55,7 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         ),
         accent="#4DA6FF",
         available=True,
-        supported_languages=["en", "it", "ar-EG", "ar-AE"],
+        supported_languages=_ALL_LANGUAGES,
     ),
     "manufacturing": DemoConfig(
         slug="manufacturing",
@@ -46,7 +69,7 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         ),
         accent="#4DA6FF",
         available=False,
-        supported_languages=["en", "it", "ar-EG", "ar-AE"],
+        supported_languages=_ALL_LANGUAGES,
     ),
     "logistics": DemoConfig(
         slug="logistics",
@@ -60,7 +83,7 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         ),
         accent="#4DA6FF",
         available=False,
-        supported_languages=["en", "it", "ar-EG", "ar-AE"],
+        supported_languages=_ALL_LANGUAGES,
     ),
     "real_estate": DemoConfig(
         slug="real_estate",
@@ -74,7 +97,7 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         ),
         accent="#4DA6FF",
         available=False,
-        supported_languages=["en", "it", "ar-EG", "ar-AE"],
+        supported_languages=_ALL_LANGUAGES,
     ),
     "dental": DemoConfig(
         slug="dental",
@@ -88,7 +111,7 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         ),
         accent="#4DA6FF",
         available=False,
-        supported_languages=["en", "it", "ar-EG", "ar-AE"],
+        supported_languages=_ALL_LANGUAGES,
         disclaimer={
             "en": (
                 "This AI assistant is intended for qualified dental professionals only. "

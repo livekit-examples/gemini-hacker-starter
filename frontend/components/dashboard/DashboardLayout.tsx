@@ -7,6 +7,13 @@ import { ToolOutputPanel } from './ToolOutputPanel';
 import { SessionControls } from './SessionControls';
 import { VoiceActivity } from './VoiceActivity';
 
+export interface LanguageInfo {
+  code: string;
+  display_name: string;
+  flag: string;
+  is_rtl: boolean;
+}
+
 export interface DemoConfig {
   slug: string;
   name: string;
@@ -16,7 +23,7 @@ export interface DemoConfig {
   value_prop: string;
   accent: string;
   available: boolean;
-  supported_languages: string[];
+  supported_languages: LanguageInfo[];
   disclaimer?: Record<string, string>;
 }
 
@@ -39,9 +46,13 @@ export function DashboardLayout({
   onReset = () => {},
   className,
 }: DashboardLayoutProps) {
+  const currentLang = config.supported_languages.find((l) => l.code === selectedLanguage);
+  const isRtl = currentLang?.is_rtl ?? false;
+
   return (
     <div
       data-testid="dashboard-layout"
+      dir={isRtl ? 'rtl' : 'ltr'}
       className={cn(
         'flex flex-col lg:flex-row gap-4 px-4 pt-24 pb-6 min-h-screen',
         className
@@ -57,7 +68,7 @@ export function DashboardLayout({
           name={config.persona_name}
           role={config.persona_role}
           connectionState={connectionState}
-          language={selectedLanguage.toUpperCase()}
+          language={currentLang ? `${currentLang.flag} ${currentLang.code.toUpperCase()}` : selectedLanguage.toUpperCase()}
         />
       </div>
 
@@ -70,7 +81,7 @@ export function DashboardLayout({
         <VoiceActivity className="h-32 flex-shrink-0" />
 
         {/* Live transcript — fills remaining space */}
-        <TranscriptPanel className="flex-1 min-h-[200px]" />
+        <TranscriptPanel className="flex-1 min-h-[200px]" isRtl={isRtl} />
       </div>
 
       {/* ── Right panel — 320px ──────────────────────────────────────── */}
@@ -80,6 +91,7 @@ export function DashboardLayout({
       >
         <ToolOutputPanel className="flex-1 min-h-[200px]" />
         <SessionControls
+          languages={config.supported_languages}
           onDisconnect={onDisconnect}
           onReset={onReset}
           selectedLanguage={selectedLanguage}

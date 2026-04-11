@@ -570,7 +570,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 11 — Language Selector + RTL Frontend
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** The user can select a language before connecting. Arabic demos render RTL correctly.
 
@@ -1057,7 +1057,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 8 | 3 | [x] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
 | 9 | 4 | [x] | Demo Config System | Foundation | DemoConfig for all 6 industries, replaces Session 8 stubs |
 | 10 | 10 | [x] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
-| 11 | 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
+| 11 | 11 | [x] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
 | **12** | **12** | **[ ]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
 | **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [ ] | Sales: Backend | Sales | SalesAgent, 3 tools |

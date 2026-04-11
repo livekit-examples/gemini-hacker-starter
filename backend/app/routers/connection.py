@@ -7,6 +7,7 @@ import time
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from app.config import settings
 from app.models import ConnectionDetailsResponse
@@ -27,6 +28,7 @@ def _mint_livekit_token(
     identity: str,
     participant_name: str,
     room_name: str,
+    metadata: str | None = None,
 ) -> str:
     """Mint a LiveKit-compatible JWT token using HMAC-SHA256."""
     now = int(time.time())
@@ -45,6 +47,8 @@ def _mint_livekit_token(
             "canSubscribe": True,
         },
     }
+    if metadata:
+        payload["metadata"] = metadata
     header_b64 = _b64url_encode(json.dumps(header, separators=(",", ":")).encode())
     payload_b64 = _b64url_encode(json.dumps(payload, separators=(",", ":")).encode())
     signing_input = f"{header_b64}.{payload_b64}".encode()
@@ -54,8 +58,7 @@ def _mint_livekit_token(
     return f"{header_b64}.{payload_b64}.{_b64url_encode(signature)}"
 
 
-@router.get("/api/connection-details", response_model=ConnectionDetailsResponse)
-async def connection_details() -> ConnectionDetailsResponse:
+def _validate_livekit_settings() -> None:
     if not settings.livekit_url:
         raise HTTPException(status_code=503, detail="LIVEKIT_URL is not configured")
     if not settings.livekit_api_key:
@@ -63,22 +66,41 @@ async def connection_details() -> ConnectionDetailsResponse:
     if not settings.livekit_api_secret:
         raise HTTPException(status_code=503, detail="LIVEKIT_API_SECRET is not configured")
 
+
+def _build_connection_response(language: str | None = None) -> ConnectionDetailsResponse:
+    _validate_livekit_settings()
     suffix = random.randint(0, 99_999)
     room_name = f"voice_assistant_room_{suffix}"
     participant_identity = f"voice_assistant_user_{suffix}"
     participant_name = "user"
-
+    metadata = json.dumps({"preferredLanguage": language}) if language else None
     token = _mint_livekit_token(
         api_key=settings.livekit_api_key,
         api_secret=settings.livekit_api_secret,
         identity=participant_identity,
         participant_name=participant_name,
         room_name=room_name,
+        metadata=metadata,
     )
-
     return ConnectionDetailsResponse(
         serverUrl=settings.livekit_url,
         roomName=room_name,
         participantToken=token,
         participantName=participant_name,
     )
+
+
+class ConnectionDetailsRequest(BaseModel):
+    language: str | None = None
+
+
+@router.get("/api/connection-details", response_model=ConnectionDetailsResponse)
+async def connection_details() -> ConnectionDetailsResponse:
+    return _build_connection_response()
+
+
+@router.post("/api/connection-details", response_model=ConnectionDetailsResponse)
+async def connection_details_post(
+    body: ConnectionDetailsRequest = ConnectionDetailsRequest(),
+) -> ConnectionDetailsResponse:
+    return _build_connection_response(language=body.language)
