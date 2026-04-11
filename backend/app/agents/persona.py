@@ -12,6 +12,9 @@ from typing import Any
 from livekit import rtc
 
 from app.agents.base import BaseAgent
+from app.config import settings
+from app.languages.detector import detect_language
+from app.languages.profiles import LanguageProfile
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +37,13 @@ class PersonaAgent(BaseAgent):
     # Class-level defaults — subclasses override via instance attrs in __init__.
     persona_name: str = ""
     persona_instructions: str = ""
-    language_profile: Any = None
+    language_profile: LanguageProfile | None = None
 
     def __init__(self, room: rtc.Room) -> None:
         self._tool_registry: list = []
+        self.language_profile = detect_language(None, settings.default_language)
         instructions = self.build_system_prompt()
+        self._system_prompt = instructions
         super().__init__(room=room, instructions=instructions)
         self._register_tools()
 
@@ -72,19 +77,10 @@ class PersonaAgent(BaseAgent):
         return "\n\n".join(filter(None, parts))
 
     def switch_language(self, code: str) -> None:
-        """Update language_profile by code and rebuild system prompt.
-
-        Wired to the language detector introduced in Session 10. A graceful
-        no-op is performed if the detector module is not yet available.
-        """
-        try:
-            from app.languages.detector import detect_language  # Session 10
-
-            self.language_profile = detect_language({"preferredLanguage": code}, "en")
-            logger.info("Switched language to %s", code)
-        except ImportError:
-            logger.debug(
-                "Language detector not available yet (implemented in Session 10); "
-                "language code '%s' stored but not applied.",
-                code,
-            )
+        """Update language profile and refresh the composed system prompt."""
+        self.language_profile = detect_language(
+            {"preferredLanguage": code},
+            settings.default_language,
+        )
+        self._system_prompt = self.build_system_prompt()
+        logger.info("Switched language to %s", self.language_profile.code)

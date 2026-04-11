@@ -528,7 +528,7 @@ Sessions are grouped into phases. Each session has a single focused scope, its o
 
 ### SESSION 10 — Language Profiles + Backend Detector
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Goal:** All 4 language profiles are written and tested. The agent can detect and apply the correct one from participant metadata.
 
@@ -1056,7 +1056,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | **7** | **9** | **[x]** | **Dashboard Layout** | **Design** | **3-panel shell, Transcript, ToolOutput, Controls** |
 | 8 | 3 | [x] | Agent Class Hierarchy | Foundation | BaseAgent → PersonaAgent → registry |
 | 9 | 4 | [x] | Demo Config System | Foundation | DemoConfig for all 6 industries, replaces Session 8 stubs |
-| 10 | 10 | [ ] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
+| 10 | 10 | [x] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
 | 11 | 11 | [ ] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
 | **12** | **12** | **[ ]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
 | **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
