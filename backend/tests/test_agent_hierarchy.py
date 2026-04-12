@@ -4,6 +4,7 @@ Verifies that BaseAgent → PersonaAgent → HackathonAgent is correctly set up,
 that build_system_prompt() produces well-formed output, and that register_tool
 populates _tool_registry.
 """
+
 from unittest.mock import MagicMock, patch
 
 import pytest

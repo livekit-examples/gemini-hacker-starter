@@ -5,6 +5,7 @@ streaming (Lyria RealTime), and full video/camera awareness.
 
 Registered in the agent registry under the slug ``"hackathon"``.
 """
+
 import asyncio
 import logging
 import os
@@ -114,7 +115,9 @@ class HackathonAgent(PersonaAgent):
             await writer.write(image_bytes)
             await writer.aclose()
             result = f"Image generated and sent to the screen. Prompt used: {prompt}"
-            await self._speak_tool_followup(context, "generate_image", {"message": result})
+            await self._speak_tool_followup(
+                context, "generate_image", {"message": result}
+            )
             return result
 
         except Exception as exc:
@@ -177,7 +180,9 @@ class HackathonAgent(PersonaAgent):
 
         if self._music_track_pub is not None:
             try:
-                await self._room.local_participant.unpublish_track(self._music_track_pub.sid)
+                await self._room.local_participant.unpublish_track(
+                    self._music_track_pub.sid
+                )
             except Exception:
                 pass
             self._music_track_pub = None
@@ -187,7 +192,9 @@ class HackathonAgent(PersonaAgent):
         SAMPLE_RATE = 48000
         NUM_CHANNELS = 2
 
-        audio_source = rtc.AudioSource(sample_rate=SAMPLE_RATE, num_channels=NUM_CHANNELS)
+        audio_source = rtc.AudioSource(
+            sample_rate=SAMPLE_RATE, num_channels=NUM_CHANNELS
+        )
         track = rtc.LocalAudioTrack.create_audio_track("lyria-music", audio_source)
         options = rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_UNKNOWN)
 
@@ -195,7 +202,9 @@ class HackathonAgent(PersonaAgent):
         self._music_track_pub = pub
 
         try:
-            async with self._lyria_client.aio.live.music.connect(model=LYRIA_MODEL) as session:
+            async with self._lyria_client.aio.live.music.connect(
+                model=LYRIA_MODEL
+            ) as session:
                 await session.set_weighted_prompts(
                     prompts=[genai_types.WeightedPrompt(text=prompt, weight=1.0)]
                 )

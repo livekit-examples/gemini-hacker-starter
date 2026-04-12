@@ -5,6 +5,7 @@ Confident, direct, commercially sharp. Helps sales professionals close
 deals faster by analysing screen content, generating proposal copy, and
 surfacing the right talking points at the right moment.
 """
+
 from __future__ import annotations
 
 from livekit import rtc

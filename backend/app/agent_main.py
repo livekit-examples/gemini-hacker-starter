@@ -4,6 +4,7 @@ This module is executed as a subprocess by agent_runner.py so that the
 LiveKit worker can run on its own main thread (required for signal handlers
 and plugin registration) while FastAPI occupies the parent process.
 """
+
 import json
 import logging
 import sys

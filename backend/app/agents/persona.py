@@ -4,6 +4,7 @@ Subclasses set `persona_name` and `persona_instructions` as instance
 attributes *before* calling ``super().__init__(room)`` so that
 ``build_system_prompt()`` picks them up during construction.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -81,7 +82,9 @@ class PersonaAgent(BaseAgent):
             parts.append(self.persona_instructions)
 
         if self.language_profile is not None:
-            lang_instructions = getattr(self.language_profile, "system_instructions", None)
+            lang_instructions = getattr(
+                self.language_profile, "system_instructions", None
+            )
             if lang_instructions:
                 parts.append(lang_instructions)
 
@@ -145,16 +148,35 @@ class PersonaAgent(BaseAgent):
     def _build_tool_followup_text(self, code: str, tool_name: str, result: Any) -> str:
         """Build a short localized spoken summary after a tool call."""
         tool_labels = {
-            "service_requirements": {"en": "service requirements", "it": "i requisiti del servizio", "ar-EG": "متطلبات الخدمة", "ar-AE": "متطلبات الخدمة"},
-            "application_status": {"en": "application status", "it": "lo stato della pratica", "ar-EG": "حالة الطلب", "ar-AE": "حالة الطلب"},
-            "appointment_confirmation": {"en": "appointment booking", "it": "la prenotazione dell'appuntamento", "ar-EG": "حجز الموعد", "ar-AE": "حجز الموعد"},
+            "service_requirements": {
+                "en": "service requirements",
+                "it": "i requisiti del servizio",
+                "ar-EG": "متطلبات الخدمة",
+                "ar-AE": "متطلبات الخدمة",
+            },
+            "application_status": {
+                "en": "application status",
+                "it": "lo stato della pratica",
+                "ar-EG": "حالة الطلب",
+                "ar-AE": "حالة الطلب",
+            },
+            "appointment_confirmation": {
+                "en": "appointment booking",
+                "it": "la prenotazione dell'appuntamento",
+                "ar-EG": "حجز الموعد",
+                "ar-AE": "حجز الموعد",
+            },
         }
-        localized_label = tool_labels.get(tool_name, {}).get(code, tool_name.replace("_", " "))
+        localized_label = tool_labels.get(tool_name, {}).get(
+            code, tool_name.replace("_", " ")
+        )
 
         summary = self._summarize_tool_result(result)
 
         if code == "it":
-            return f"Ho controllato {localized_label}. {summary} Come desidera procedere?"
+            return (
+                f"Ho controllato {localized_label}. {summary} Come desidera procedere?"
+            )
         if code == "ar-EG":
             return f"راجعت {localized_label}. {summary} تحب نعمل إيه بعد كده؟"
         if code == "ar-AE":
@@ -168,7 +190,14 @@ class PersonaAgent(BaseAgent):
                 return "No exact match was found in the records."
 
             parts: list[str] = []
-            for key in ("service", "status", "date", "time", "office", "confirmation_id"):
+            for key in (
+                "service",
+                "status",
+                "date",
+                "time",
+                "office",
+                "confirmation_id",
+            ):
                 value = result.get(key)
                 if value:
                     parts.append(f"{key.replace('_', ' ')}: {value}")

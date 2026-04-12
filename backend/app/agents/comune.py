@@ -4,6 +4,7 @@ Persona: Giulia, Municipal Services AI.
 Patient, precise, empathetic. Bridges the gap between bureaucratic complexity
 and the citizen who just needs to get things done.
 """
+
 from __future__ import annotations
 
 from livekit import rtc
