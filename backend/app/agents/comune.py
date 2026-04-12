@@ -70,6 +70,7 @@ class ComuneAgent(PersonaAgent):
         """
         result = _lookup_service_requirements(service_name)
         await self._publish_tool_output("service_requirements", result)
+        await self._speak_tool_followup(context, "service_requirements", result)
         return result
 
     @function_tool()
@@ -88,6 +89,7 @@ class ComuneAgent(PersonaAgent):
         """
         result = _check_application_status(application_id)
         await self._publish_tool_output("application_status", result)
+        await self._speak_tool_followup(context, "application_status", result)
         return result
 
     @function_tool()
@@ -111,4 +113,5 @@ class ComuneAgent(PersonaAgent):
         """
         result = _book_appointment(service, citizen_name, preferred_date)
         await self._publish_tool_output("appointment_confirmation", result)
+        await self._speak_tool_followup(context, "appointment_confirmation", result)
         return result

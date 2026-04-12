@@ -24,6 +24,28 @@ from app.config import settings
 server = AgentServer()
 
 
+def _build_agent_session(selected_model: str, selected_voice: str) -> AgentSession:
+    """Build an AgentSession for Google realtime voice.
+
+    For realtime models, do not force LiveKit Inference STT. Let the
+    realtime model handle speech recognition natively to avoid gateway
+    rate-limit handshakes.
+    """
+    return AgentSession(
+        llm=lk_google.realtime.RealtimeModel(
+            model=selected_model,
+            voice=selected_voice,
+        ),
+        turn_handling=TurnHandlingOptions(
+            endpointing={
+                "mode": "dynamic",
+                "min_delay": 0.4,
+                "max_delay": 2.8,
+            },
+        ),
+    )
+
+
 @server.rtc_session(agent_name="gemini-hackathon-agent")
 async def entrypoint(ctx: agents.JobContext):
     await ctx.connect()
@@ -62,19 +84,7 @@ async def entrypoint(ctx: agents.JobContext):
             except (json.JSONDecodeError, TypeError):
                 logger.debug("Participant metadata was not valid JSON")
 
-    session = AgentSession(
-        llm=lk_google.realtime.RealtimeModel(
-            model=selected_model,
-            voice=selected_voice,
-        ),
-        turn_handling=TurnHandlingOptions(
-            endpointing={
-                "mode": "dynamic",
-                "min_delay": 0.4,
-                "max_delay": 2.8,
-            },
-        ),
-    )
+    session = _build_agent_session(selected_model, selected_voice)
 
     agent = get_agent(selected_industry, ctx.room)
     logger.info(

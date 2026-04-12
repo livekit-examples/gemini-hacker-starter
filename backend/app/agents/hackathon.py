@@ -113,12 +113,19 @@ class HackathonAgent(PersonaAgent):
             )
             await writer.write(image_bytes)
             await writer.aclose()
-
-            return f"Image generated and sent to the screen. Prompt used: {prompt}"
+            result = f"Image generated and sent to the screen. Prompt used: {prompt}"
+            await self._speak_tool_followup(context, "generate_image", {"message": result})
+            return result
 
         except Exception as exc:
             logger.error("Image generation failed: %s", exc)
-            return f"Image generation failed: {exc}"
+            error_result = f"Image generation failed: {exc}"
+            await self._speak_tool_followup(
+                context,
+                "generate_image",
+                {"message": error_result},
+            )
+            return error_result
 
     @function_tool()
     async def start_music(
@@ -142,15 +149,21 @@ class HackathonAgent(PersonaAgent):
         logger.info("Starting Lyria music: %s @ %d BPM", prompt, bpm)
         self._music_stop_event.clear()
         self._music_task = asyncio.create_task(self._stream_lyria(prompt, bpm))
-        return f"Music started: {prompt} at {bpm} BPM. Call stop_music to stop it."
+        result = f"Music started: {prompt} at {bpm} BPM. Call stop_music to stop it."
+        await self._speak_tool_followup(context, "start_music", {"message": result})
+        return result
 
     @function_tool()
     async def stop_music(self, context: RunContext) -> str:
         """Stop the currently playing Lyria music."""
         if self._music_task is None or self._music_task.done():
-            return "No music is currently playing."
+            result = "No music is currently playing."
+            await self._speak_tool_followup(context, "stop_music", {"message": result})
+            return result
         await self._stop_music_internal()
-        return "Music stopped."
+        result = "Music stopped."
+        await self._speak_tool_followup(context, "stop_music", {"message": result})
+        return result
 
     async def _stop_music_internal(self) -> None:
         if self._music_task and not self._music_task.done():

@@ -12,6 +12,7 @@ import logging
 from typing import Any
 
 from livekit import rtc
+from livekit.agents import RunContext
 
 from app.agents.base import BaseAgent
 from app.config import settings
@@ -19,6 +20,12 @@ from app.languages.detector import detect_language
 from app.languages.profiles import LanguageProfile
 
 logger = logging.getLogger(__name__)
+
+TOOL_FOLLOW_UP_RULE = (
+    "Tool-use speaking rule: after every tool call, immediately deliver a spoken "
+    "response to the user that summarizes the result and gives a clear next step or "
+    "question. Never end a turn silently after using a tool."
+)
 
 
 class PersonaAgent(BaseAgent):
@@ -68,6 +75,8 @@ class PersonaAgent(BaseAgent):
         """Build the full system prompt from BASE_VIDEO_AWARENESS + persona + language."""
         parts: list[str] = [self.BASE_VIDEO_AWARENESS]
 
+        parts.append(TOOL_FOLLOW_UP_RULE)
+
         if self.persona_instructions:
             parts.append(self.persona_instructions)
 
@@ -107,3 +116,79 @@ class PersonaAgent(BaseAgent):
             )
         except Exception as exc:
             logger.warning("Failed to publish tool output for '%s': %s", tool_name, exc)
+
+    async def _speak_tool_followup(
+        self,
+        context: RunContext,
+        tool_name: str,
+        result: Any,
+    ) -> None:
+        """Speak a realtime-safe post-tool summary to avoid silent tool turns.
+
+        Google realtime preview models do not support AgentSession.generate_reply.
+        Use AgentSession.say instead so tool calls can always complete with speech.
+        """
+        code = (self.language_profile.code if self.language_profile else "en").strip()
+        followup_text = self._build_tool_followup_text(code, tool_name, result)
+
+        try:
+            # add_to_chat_ctx=False avoids unsupported update_chat_ctx calls on preview models.
+            speech = context.session.say(followup_text, add_to_chat_ctx=False)
+            await speech.wait_for_playout()
+        except Exception as exc:
+            logger.warning(
+                "Failed to speak post-tool follow-up for '%s': %s",
+                tool_name,
+                exc,
+            )
+
+    def _build_tool_followup_text(self, code: str, tool_name: str, result: Any) -> str:
+        """Build a short localized spoken summary after a tool call."""
+        tool_labels = {
+            "service_requirements": {"en": "service requirements", "it": "i requisiti del servizio", "ar-EG": "متطلبات الخدمة", "ar-AE": "متطلبات الخدمة"},
+            "application_status": {"en": "application status", "it": "lo stato della pratica", "ar-EG": "حالة الطلب", "ar-AE": "حالة الطلب"},
+            "appointment_confirmation": {"en": "appointment booking", "it": "la prenotazione dell'appuntamento", "ar-EG": "حجز الموعد", "ar-AE": "حجز الموعد"},
+        }
+        localized_label = tool_labels.get(tool_name, {}).get(code, tool_name.replace("_", " "))
+
+        summary = self._summarize_tool_result(result)
+
+        if code == "it":
+            return f"Ho controllato {localized_label}. {summary} Come desidera procedere?"
+        if code == "ar-EG":
+            return f"راجعت {localized_label}. {summary} تحب نعمل إيه بعد كده؟"
+        if code == "ar-AE":
+            return f"تمت مراجعة {localized_label}. {summary} تفضل ماذا نفعل بعد ذلك؟"
+        return f"I checked {localized_label}. {summary} What would you like to do next?"
+
+    def _summarize_tool_result(self, result: Any) -> str:
+        """Return a compact textual summary from tool output."""
+        if isinstance(result, dict):
+            if result.get("found") is False:
+                return "No exact match was found in the records."
+
+            parts: list[str] = []
+            for key in ("service", "status", "date", "time", "office", "confirmation_id"):
+                value = result.get(key)
+                if value:
+                    parts.append(f"{key.replace('_', ' ')}: {value}")
+                if len(parts) >= 2:
+                    break
+
+            required_documents = result.get("required_documents")
+            if isinstance(required_documents, list) and required_documents:
+                parts.append(f"required documents: {len(required_documents)}")
+
+            if parts:
+                return "; ".join(parts) + "."
+
+        try:
+            serialized = json.dumps(result, ensure_ascii=False, default=str)
+            if len(serialized) > 120:
+                serialized = serialized[:117] + "..."
+            return f"Result ready: {serialized}"
+        except TypeError:
+            text = str(result)
+            if len(text) > 120:
+                text = text[:117] + "..."
+            return f"Result ready: {text}"

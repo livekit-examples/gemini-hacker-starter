@@ -114,6 +114,17 @@ def test_build_system_prompt_contains_persona_instructions():
     assert PERSONA_INSTRUCTIONS[:80] in prompt
 
 
+def test_build_system_prompt_contains_tool_follow_up_rule():
+    from app.agents.hackathon import HackathonAgent
+    from app.agents.persona import TOOL_FOLLOW_UP_RULE
+
+    with patch("google.genai.Client"):
+        agent = HackathonAgent(room=make_mock_room())
+
+    prompt = agent.build_system_prompt()
+    assert TOOL_FOLLOW_UP_RULE in prompt
+
+
 # ---------------------------------------------------------------------------
 # register_tool / _tool_registry
 # ---------------------------------------------------------------------------
@@ -158,3 +169,30 @@ def test_switch_language_does_not_raise_before_session_10():
 
     # Language detector module is not yet available — must not raise.
     agent.switch_language("it")
+
+
+@pytest.mark.asyncio
+async def test_sales_tool_triggers_spoken_followup_with_tools_disabled():
+    from app.agents.sales import SalesAgent
+
+    mock_room = make_mock_room()
+    context = MagicMock()
+    context.session = MagicMock()
+    mock_speech = MagicMock()
+    mock_speech.wait_for_playout = MagicMock()
+
+    async def _wait_for_playout():
+        return None
+
+    mock_speech.wait_for_playout.side_effect = _wait_for_playout
+    context.session.say.return_value = mock_speech
+
+    with patch("google.genai.Client"):
+        agent = SalesAgent(room=mock_room)
+
+    await agent.analyze_screen_content(context, "CRM showing 3 open opportunities")
+
+    context.session.say.assert_called_once()
+    _, kwargs = context.session.say.call_args
+    assert kwargs["add_to_chat_ctx"] is False
+    mock_speech.wait_for_playout.assert_called_once()

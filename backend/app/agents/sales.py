@@ -72,6 +72,7 @@ class SalesAgent(PersonaAgent):
         """
         result = _analyze_screen_content(summary)
         await self._publish_tool_output("screen_analysis", result)
+        await self._speak_tool_followup(context, "screen_analysis", result)
         return result
 
     @function_tool()
@@ -97,6 +98,11 @@ class SalesAgent(PersonaAgent):
             "proposal_section",
             {"section": section, "context": prospect_context, "content": text},
         )
+        await self._speak_tool_followup(
+            context,
+            "proposal_section",
+            {"section": section, "context": prospect_context, "content": text},
+        )
         return text
 
     @function_tool()
@@ -117,6 +123,11 @@ class SalesAgent(PersonaAgent):
         """
         confirmation = _log_talking_points(points)
         await self._publish_tool_output(
+            "talking_points",
+            {"points": points, "confirmation": confirmation},
+        )
+        await self._speak_tool_followup(
+            context,
             "talking_points",
             {"points": points, "confirmation": confirmation},
         )
