@@ -69,7 +69,7 @@ class ComuneAgent(PersonaAgent):
                           "carta d'identità", "permesso di costruire".
         """
         result = _lookup_service_requirements(service_name)
-        await self._publish_tool_output("lookup_service_requirements", result)
+        await self._publish_tool_output("service_requirements", result)
         return result
 
     @function_tool()
@@ -87,7 +87,7 @@ class ComuneAgent(PersonaAgent):
             application_id: The application reference number, e.g. "APP-2024-ANA-00341".
         """
         result = _check_application_status(application_id)
-        await self._publish_tool_output("check_application_status", result)
+        await self._publish_tool_output("application_status", result)
         return result
 
     @function_tool()
@@ -110,5 +110,5 @@ class ComuneAgent(PersonaAgent):
             preferred_date: Requested date in ISO format (YYYY-MM-DD).
         """
         result = _book_appointment(service, citizen_name, preferred_date)
-        await self._publish_tool_output("book_appointment", result)
+        await self._publish_tool_output("appointment_confirmation", result)
         return result

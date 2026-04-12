@@ -7,6 +7,7 @@ import { ToolOutputPanel } from './ToolOutputPanel';
 import { SessionControls } from './SessionControls';
 import { VoiceActivity } from './VoiceActivity';
 import { DemoGuidePanel, type DemoScenario } from './DemoGuidePanel';
+import { ComunePanel } from './panels/ComunePanel';
 
 export interface LanguageInfo {
   code: string;
@@ -104,10 +105,17 @@ export function DashboardLayout({
         data-testid="dashboard-right"
         className="w-full lg:w-[320px] lg:flex-shrink-0 flex flex-col gap-4 lg:h-full lg:overflow-hidden"
       >
-        <ToolOutputPanel
-          className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
-          resetVersion={toolOutputResetVersion}
-        />
+        {config.slug === 'comune' ? (
+          <ComunePanel
+            className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
+            resetVersion={toolOutputResetVersion}
+          />
+        ) : (
+          <ToolOutputPanel
+            className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
+            resetVersion={toolOutputResetVersion}
+          />
+        )}
         <SessionControls
           languages={config.supported_languages}
           connectionState={connectionState}
