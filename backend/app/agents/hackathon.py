@@ -5,6 +5,7 @@ streaming (Lyria RealTime), and full video/camera awareness.
 
 Registered in the agent registry under the slug ``"hackathon"``.
 """
+
 import asyncio
 import logging
 import os
@@ -113,12 +114,21 @@ class HackathonAgent(PersonaAgent):
             )
             await writer.write(image_bytes)
             await writer.aclose()
-
-            return f"Image generated and sent to the screen. Prompt used: {prompt}"
+            result = f"Image generated and sent to the screen. Prompt used: {prompt}"
+            await self._speak_tool_followup(
+                context, "generate_image", {"message": result}
+            )
+            return result
 
         except Exception as exc:
             logger.error("Image generation failed: %s", exc)
-            return f"Image generation failed: {exc}"
+            error_result = f"Image generation failed: {exc}"
+            await self._speak_tool_followup(
+                context,
+                "generate_image",
+                {"message": error_result},
+            )
+            return error_result
 
     @function_tool()
     async def start_music(
@@ -142,15 +152,21 @@ class HackathonAgent(PersonaAgent):
         logger.info("Starting Lyria music: %s @ %d BPM", prompt, bpm)
         self._music_stop_event.clear()
         self._music_task = asyncio.create_task(self._stream_lyria(prompt, bpm))
-        return f"Music started: {prompt} at {bpm} BPM. Call stop_music to stop it."
+        result = f"Music started: {prompt} at {bpm} BPM. Call stop_music to stop it."
+        await self._speak_tool_followup(context, "start_music", {"message": result})
+        return result
 
     @function_tool()
     async def stop_music(self, context: RunContext) -> str:
         """Stop the currently playing Lyria music."""
         if self._music_task is None or self._music_task.done():
-            return "No music is currently playing."
+            result = "No music is currently playing."
+            await self._speak_tool_followup(context, "stop_music", {"message": result})
+            return result
         await self._stop_music_internal()
-        return "Music stopped."
+        result = "Music stopped."
+        await self._speak_tool_followup(context, "stop_music", {"message": result})
+        return result
 
     async def _stop_music_internal(self) -> None:
         if self._music_task and not self._music_task.done():
@@ -164,7 +180,9 @@ class HackathonAgent(PersonaAgent):
 
         if self._music_track_pub is not None:
             try:
-                await self._room.local_participant.unpublish_track(self._music_track_pub.sid)
+                await self._room.local_participant.unpublish_track(
+                    self._music_track_pub.sid
+                )
             except Exception:
                 pass
             self._music_track_pub = None
@@ -174,7 +192,9 @@ class HackathonAgent(PersonaAgent):
         SAMPLE_RATE = 48000
         NUM_CHANNELS = 2
 
-        audio_source = rtc.AudioSource(sample_rate=SAMPLE_RATE, num_channels=NUM_CHANNELS)
+        audio_source = rtc.AudioSource(
+            sample_rate=SAMPLE_RATE, num_channels=NUM_CHANNELS
+        )
         track = rtc.LocalAudioTrack.create_audio_track("lyria-music", audio_source)
         options = rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_UNKNOWN)
 
@@ -182,7 +202,9 @@ class HackathonAgent(PersonaAgent):
         self._music_track_pub = pub
 
         try:
-            async with self._lyria_client.aio.live.music.connect(model=LYRIA_MODEL) as session:
+            async with self._lyria_client.aio.live.music.connect(
+                model=LYRIA_MODEL
+            ) as session:
                 await session.set_weighted_prompts(
                     prompts=[genai_types.WeightedPrompt(text=prompt, weight=1.0)]
                 )

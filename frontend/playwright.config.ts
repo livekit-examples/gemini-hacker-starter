@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const customChromium = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
-
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
@@ -18,7 +16,10 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        ...(customChromium ? { executablePath: customChromium } : {}),
+        // Use the pre-installed Chromium binary when the packaged headless shell is unavailable.
+        ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+          : {}),
       },
     },
   ],

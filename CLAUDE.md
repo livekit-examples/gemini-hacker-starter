@@ -183,6 +183,7 @@ LiveKit brand artifacts to strip: `/lk-logo.svg`, `/lk-logo-dark.svg`, all `lk-*
 8. New personas are added by subclassing `PersonaAgent` + registering in `registry.py` only.
 9. Every industry `DemoConfig` ships a `demo_scenarios` list (model: `DemoScenario { title, description, steps: list[str] }`). Each scenario is a realistic multi-turn journey: a one-line context description and 2–4 ordered prompts the presenter speaks aloud. These are rendered live in the dashboard's `DemoGuidePanel` (left column, below `PersonaCard`) — collapsible cards the user expands during the session. Minimum 4 scenarios per industry, covering all registered tools and at least one failure/edge-case path.
 10. Full website localization is mandatory: all global UI copy (nav, footer, landing, dashboard chrome, buttons, empty/loading/error states, metadata text) must be translated for `en`, `it`, `ar-EG`, and `ar-AE`; no hardcoded user-facing strings outside localization catalogs.
+11. Tool latency UX is mandatory: when a tool call exceeds a configurable delay threshold, the agent must emit a short, natural filler utterance in the active language (for example “one moment”, “un attimo”, localized Arabic variants), then continue with the final answer after tool completion. Filler phrases, thresholds, and enable/disable flags must be configurable per industry/persona.
 
 ---
 
@@ -641,7 +642,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 13 — Public Administration (Comune): Frontend Panel
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Scope:**
 - `components/dashboard/panels/ComunePanel.tsx`:
@@ -983,6 +984,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 - Frontend error boundary: `components/ErrorBoundary.tsx` wraps dashboard; renders EXODIA-styled fallback card on agent disconnect or JS error
 - Backend rate limiting: `slowapi` — 10 requests/minute/IP on `/api/connection-details`; returns 429 with `Retry-After` header
 - All backend endpoints: Pydantic input validation; 422 with descriptive `detail` on bad input
+- Tool-call latency filler mechanism: add configurable multilingual filler utterances for long-running tools (`enabled`, `threshold_ms`, and per-language phrase list in config); when threshold is exceeded the agent speaks one filler utterance, then resumes normal post-tool response when result arrives
 - Secrets audit: `grep` for `GOOGLE_API_KEY`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` values in frontend bundle; assert none found
 - Structured logging: `structlog` in backend with JSON output; no raw `print()` calls; no PII (email, name, tracking IDs) in log messages
 - Docker health checks: all services
@@ -993,10 +995,11 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 - `pytest backend/tests/test_rate_limiting.py` — 11th request in 60s window → 429 with `Retry-After`
 - `pytest backend/tests/test_input_validation.py` — missing `industry` param on `/api/config` → 422; invalid JSON body → 422
 - `pytest backend/tests/test_no_secrets_in_responses.py` — assert env var values absent from all API response bodies
+- `pytest backend/tests/test_tool_latency_fillers.py` — simulated slow tool call triggers exactly one filler utterance after threshold, in selected language; fast tool calls do not trigger filler; disabled config suppresses filler
 - Playwright `test_error_boundary.spec.ts` — simulate JS error in dashboard → error boundary renders (not blank screen); error card styled with EXODIA tokens
 - Locust load test script `backend/tests/locustfile.py` — 20 RPS for 30s on `/api/connection-details`; p99 < 500ms; run and document results
 
-**Exit Criterion:** All tests green. Load test passes. Cold start ≤ 60s documented. Zero secret leaks. README reviewed for clarity.
+**Exit Criterion:** All tests green. Load test passes. Cold start ≤ 60s documented. Zero secret leaks. Multilingual latency filler behavior verified for all 4 languages. README reviewed for clarity.
 
 ---
 
@@ -1110,7 +1113,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 10 | 10 | [x] | Language Profiles | Multilingual | 4 profiles, detector, PersonaAgent integration |
 | 11 | 11 | [x] | Language Selector + RTL | Multilingual | Frontend selector, RTL layout, smoke tests |
 | **12** | **12** | **[x]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
-| **13** | **13** | **[ ]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
+| **13** | **13** | **[x]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [x] | Sales: Backend | Sales | SalesAgent, 3 tools |
 | 15 | 15 | [x] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
 | 16 | 16 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |

@@ -20,6 +20,8 @@ interface MicrophoneInfo {
   label: string;
 }
 
+const LAST_MICROPHONE_STORAGE_KEY = 'exodia.voice.lastMicrophoneId';
+
 /**
  * Inner dashboard — must render inside AgentSessionProvider so LiveKit
  * hooks (useSessionContext, useRoomContext, useVoiceAssistant) are available.
@@ -39,6 +41,17 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    try {
+      const savedMicrophoneId = window.localStorage.getItem(LAST_MICROPHONE_STORAGE_KEY) ?? '';
+      if (savedMicrophoneId) {
+        setSelectedMicrophoneId(savedMicrophoneId);
+      }
+    } catch (error) {
+      console.error('Failed to read last microphone from local storage', error);
+    }
+  }, []);
+
+  useEffect(() => {
     const mediaDevices = navigator.mediaDevices;
     if (!mediaDevices?.enumerateDevices) {
       return;
@@ -54,6 +67,24 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
             label: device.label || `Microphone ${index + 1}`,
           }));
         setMicrophones(audioInputs);
+        setSelectedMicrophoneId((currentSelectedId) => {
+          if (!currentSelectedId) {
+            return '';
+          }
+
+          const stillAvailable = audioInputs.some((device) => device.deviceId === currentSelectedId);
+          if (stillAvailable) {
+            return currentSelectedId;
+          }
+
+          try {
+            window.localStorage.removeItem(LAST_MICROPHONE_STORAGE_KEY);
+          } catch (error) {
+            console.error('Failed to clear unavailable microphone from local storage', error);
+          }
+
+          return '';
+        });
       } catch (error) {
         console.error('Failed to enumerate audio input devices', error);
       }
@@ -67,8 +98,34 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
     };
   }, []);
 
+  useEffect(() => {
+    if (!isConnected || !selectedMicrophoneId) {
+      return;
+    }
+
+    const applySavedMicrophone = async () => {
+      try {
+        await room.switchActiveDevice('audioinput', selectedMicrophoneId);
+      } catch (error) {
+        console.error('Failed to apply saved microphone device', error);
+      }
+    };
+
+    void applySavedMicrophone();
+  }, [isConnected, room, selectedMicrophoneId]);
+
   const handleMicrophoneChange = async (deviceId: string) => {
     setSelectedMicrophoneId(deviceId);
+
+    try {
+      if (deviceId) {
+        window.localStorage.setItem(LAST_MICROPHONE_STORAGE_KEY, deviceId);
+      } else {
+        window.localStorage.removeItem(LAST_MICROPHONE_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Failed to save selected microphone to local storage', error);
+    }
 
     if (!isConnected || !deviceId) {
       return;

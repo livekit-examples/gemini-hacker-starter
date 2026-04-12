@@ -1,10 +1,11 @@
-"""SalesAgent — sales strategy and proposal generation persona.
+"""SalesAgent — sales strategy and screen analysis persona.
 
 Persona: Aria, Senior Sales Strategist.
-Confident, direct, commercially sharp. Helps sales reps close more deals by
-analysing prospect screens, generating tailored proposal copy, and surfacing
-contextual talking points in real time.
+Confident, direct, commercially sharp. Helps sales professionals close
+deals faster by analysing screen content, generating proposal copy, and
+surfacing the right talking points at the right moment.
 """
+
 from __future__ import annotations
 
 from livekit import rtc
@@ -19,28 +20,31 @@ from app.tools.sales_tools import (
 
 
 class SalesAgent(PersonaAgent):
-    """Aria — Senior Sales Strategist for EXODIA Voice Intelligence demos."""
+    """Aria — Senior Sales Strategist for EXODIA Voice Intelligence sales demos."""
 
     persona_name = "Aria"
     persona_instructions = (
-        "You are Aria, a Senior Sales Strategist embedded in EXODIA Voice Intelligence. "
-        "Your role is to help sales professionals close more deals — faster, smarter, "
-        "and with greater confidence. You think in terms of pipeline stages, stakeholder "
-        "dynamics, competitive positioning, and economic outcomes. "
-        "When a rep shares their screen or describes what they see, immediately analyse "
-        "the context and surface the three most relevant insights: what is happening, "
-        "what the risk or opportunity is, and what the rep should do next. "
-        "You speak directly and commercially — avoid vague encouragement. "
-        "Use the analyze_screen_content tool whenever the rep describes or shares "
-        "anything visible on screen, such as a CRM record, email thread, or proposal draft. "
-        "When asked to help with written copy, use generate_proposal_section with the "
-        "specific section name and the prospect context the rep provides. "
-        "Use log_talking_points to record and display a prioritised list of talking points "
-        "whenever you identify key messages the rep should communicate in the meeting. "
-        "Push back gently but firmly when a rep is about to give a discount without "
-        "confirming budget authority or deal stage — protect margin. "
-        "Always end your analysis with a clear, single recommended action the rep should "
-        "take in the next five minutes."
+        "You are Aria, a Senior Sales Strategist at EXODIA Voice Intelligence. "
+        "You are confident, commercially sharp, and always speak with purpose — "
+        "every sentence you deliver should either move the deal forward or build "
+        "genuine rapport that earns the right to do so. "
+        "When the user shares their screen or describes what they are looking at, "
+        "immediately use analyze_screen_content to surface the key findings and "
+        "recommend the highest-impact next action for the sales conversation. "
+        "When asked to draft or improve proposal language, use generate_proposal_section "
+        "to produce polished, client-ready copy — never leave the user with rough notes "
+        "when professional prose is within reach. "
+        "When the conversation surfaces key points the rep should raise, call "
+        "log_talking_points to publish them to the output panel so the rep can "
+        "reference them at a glance without losing eye contact with the prospect. "
+        "Push back respectfully when a rep is about to discount prematurely or "
+        "skip qualification — your job is to protect margin and pipeline quality, "
+        "not just validate whatever the user suggests. "
+        "Keep your tone direct and peer-to-peer; avoid corporate filler phrases "
+        "like 'certainly' or 'absolutely' — respond as a trusted colleague would. "
+        "When the context indicates high priority or an imminent close, increase "
+        "urgency appropriately and help the rep prepare for objection handling. "
+        "Always end a screen-analysis turn by asking what the rep wants to tackle next."
     )
 
     def __init__(self, room: rtc.Room) -> None:
@@ -57,18 +61,19 @@ class SalesAgent(PersonaAgent):
         context: RunContext,
         summary: str,
     ) -> dict:
-        """Analyse a plain-text description of what is currently on screen.
+        """Analyse visible screen content and return sales-relevant findings.
 
-        Use this whenever the sales rep describes or shares what they can see —
-        a CRM dashboard, email, proposal, or any other sales artefact.
+        Call this whenever the user describes or shares their screen so you can
+        surface findings, recommendations, and a priority assessment for the
+        current sales situation.
 
         Args:
-            summary: Free-text description of the screen content, e.g.
-                     "CRM showing 3 open opportunities — one at proposal stage,
-                     competitor mentioned in the Acme deal notes."
+            summary: Plain-text description of the screen content, e.g.
+                     "CRM showing 3 open opportunities worth $120k, one near close".
         """
         result = _analyze_screen_content(summary)
-        await self._publish_tool_output("talking_points", result)
+        await self._publish_tool_output("screen_analysis", result)
+        await self._speak_tool_followup(context, "screen_analysis", result)
         return result
 
     @function_tool()
@@ -78,22 +83,28 @@ class SalesAgent(PersonaAgent):
         section: str,
         prospect_context: str,
     ) -> str:
-        """Generate tailored proposal copy for a specific section.
+        """Generate a polished proposal section tailored to the prospect.
+
+        Use this when the user asks you to write or improve any section of a
+        sales proposal — executive summary, value proposition, pricing, next steps, etc.
 
         Args:
-            section: The section to generate. Supported: ``executive_summary``,
-                     ``problem_statement``, ``solution_overview``,
-                     ``value_proposition``, ``pricing``, ``next_steps``.
-            prospect_context: Brief description of the prospect, e.g.
-                              "SMB logistics company based in Milan, 120 employees,
-                              struggling with manual shipment tracking."
+            section: The proposal section to generate, e.g. "executive_summary",
+                     "value_proposition", "next_steps", "pricing".
+            prospect_context: Brief description of the prospect and deal, e.g.
+                              "SMB logistics company with 80 drivers in the UAE".
         """
-        result = _generate_proposal_section(section, prospect_context)
+        text = _generate_proposal_section(section, prospect_context)
         await self._publish_tool_output(
             "proposal_section",
-            {"section": section, "content": result, "context": prospect_context},
+            {"section": section, "context": prospect_context, "content": text},
         )
-        return result
+        await self._speak_tool_followup(
+            context,
+            "proposal_section",
+            {"section": section, "context": prospect_context, "content": text},
+        )
+        return text
 
     @function_tool()
     async def log_talking_points(
@@ -101,16 +112,24 @@ class SalesAgent(PersonaAgent):
         context: RunContext,
         points: list[str],
     ) -> str:
-        """Log and display a prioritised list of talking points for the current meeting.
+        """Log and display a prioritised list of talking points for the rep.
+
+        Call this to push a formatted list of talking points to the sales
+        dashboard panel so the rep can reference them during the conversation
+        without breaking eye contact with the prospect.
 
         Args:
             points: Ordered list of talking points, e.g.
-                    ["Lead with ROI story", "Address security objection early",
-                     "Confirm Q4 budget cycle closes Nov 30"].
+                    ["Establish budget range", "Ask about Q4 targets", "Present ROI slide"].
         """
-        result = _log_talking_points(points)
+        confirmation = _log_talking_points(points)
         await self._publish_tool_output(
             "talking_points",
-            {"points": points, "count": len(points)},
+            {"points": points, "confirmation": confirmation},
         )
-        return result
+        await self._speak_tool_followup(
+            context,
+            "talking_points",
+            {"points": points, "confirmation": confirmation},
+        )
+        return confirmation

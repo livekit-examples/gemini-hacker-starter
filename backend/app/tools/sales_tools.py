@@ -1,101 +1,71 @@
-"""Tools for the SalesAgent — sales strategy and proposal generation.
+"""Tools for the SalesAgent — sales strategy and screen analysis.
 
 Each function is a plain Python callable that the agent registers via
-``self.register_tool(fn)``.  They operate on the text/context the agent
-receives (screen descriptions, notes, section requests) and return typed
-dicts or strings that the frontend SalesPanel can render.
+``self.register_tool(fn)``. They perform deterministic analysis based on
+the provided text so the frontend panel can render structured cards.
 """
 from __future__ import annotations
 
 import re
 
 # ---------------------------------------------------------------------------
-# Priority-keyword tables
+# Heuristic helpers
 # ---------------------------------------------------------------------------
 
-_HIGH_PRIORITY_KEYWORDS = {
-    "urgent",
-    "closing",
-    "decision",
-    "budget approved",
-    "final stage",
-    "procurement",
-    "contract",
-    "competitive",
-    "competitor",
-    "churn",
-    "at risk",
-    "loss",
-    "deadline",
-    "executive",
-    "c-suite",
-    "ceo",
-    "cfo",
-    "cto",
-    "vp",
-    "board",
-    "renewal",
-    "expiring",
-    "escalation",
-    "escalated",
-    "priority",
+_HIGH_PRIORITY_SIGNALS = {
+    "urgent", "critical", "deadline", "close", "decision", "budget",
+    "contract", "sign", "deal", "opportunity", "q4", "quarter",
+    "renewal", "expir", "compet",
+}
+_LOW_PRIORITY_SIGNALS = {
+    "info", "general", "overview", "intro", "awareness", "background",
+    "explore", "curious",
 }
 
-_LOW_PRIORITY_KEYWORDS = {
-    "early stage",
-    "discovery",
-    "research",
-    "exploratory",
-    "prospect",
-    "lead",
-    "unqualified",
-    "cold",
-    "long-term",
-    "backlog",
-    "parked",
-    "on hold",
-    "waiting",
-}
-
-# ---------------------------------------------------------------------------
-# Proposal section templates
-# ---------------------------------------------------------------------------
-
-_SECTION_TEMPLATES: dict[str, str] = {
+_PROPOSAL_TEMPLATES: dict[str, str] = {
     "executive_summary": (
-        "This proposal outlines how {context} can accelerate growth and operational "
-        "efficiency through a targeted partnership. Our solution has delivered "
-        "measurable results for similar organisations, and we are confident it will "
-        "do the same for your team."
+        "This proposal outlines a tailored solution for {context}, designed to "
+        "deliver measurable ROI within the first quarter of deployment. "
+        "Our approach combines proven methodology with hands-on support, ensuring "
+        "a smooth onboarding and rapid time-to-value."
     ),
     "problem_statement": (
-        "Organisations like {context} frequently face challenges around manual "
-        "processes, fragmented data, and slow decision cycles. These pain points "
-        "translate directly into lost revenue and competitive disadvantage — "
-        "challenges our platform is purpose-built to solve."
+        "Organisations in the {context} space face mounting pressure from "
+        "escalating operational costs and fragmented tooling. "
+        "Without a unified solution, teams lose significant hours to manual "
+        "reconciliation — time that could be directed toward revenue-generating activities."
     ),
     "solution_overview": (
-        "Our platform provides {context} with a unified, AI-powered layer that "
-        "streamlines workflows, surfaces actionable insights in real time, and "
-        "integrates seamlessly with your existing technology stack — with zero "
-        "rip-and-replace risk."
+        "Our platform addresses the core challenges of {context} by integrating "
+        "real-time data intelligence with automated workflow execution. "
+        "Deployable in under two weeks, it replaces legacy spreadsheet-driven "
+        "processes with a single, auditable source of truth."
     ),
     "value_proposition": (
-        "By partnering with us, {context} can expect a 25–40 % reduction in manual "
-        "handling time, faster deal cycles, and improved forecast accuracy — backed "
-        "by a transparent ROI model tailored to your specific KPIs."
+        "Clients in the {context} sector report an average 34% reduction in "
+        "administrative overhead within 90 days of go-live. "
+        "The platform pays for itself in operational savings alone — "
+        "with strategic upsell and cross-sell potential captured on top."
     ),
     "pricing": (
-        "We offer flexible commercial models for {context}, including outcome-based "
-        "pricing and enterprise licences. A detailed quote will be scoped to your "
-        "volume and usage requirements following a brief discovery call."
+        "Pricing for {context} engagements is structured as a transparent monthly "
+        "subscription with no hidden implementation fees. "
+        "Volume discounts apply above 50 seats, and multi-year terms unlock "
+        "an additional 15% saving over the list rate."
     ),
     "next_steps": (
-        "To move forward, we recommend a 30-minute technical alignment session with "
-        "{context}'s operations and IT leads, followed by a pilot scoped to one "
-        "business unit. We can have an agreement in place within two weeks."
+        "To move forward with {context}, we recommend scheduling a 30-minute "
+        "technical discovery call this week. "
+        "Our team will prepare a tailored environment for a live demonstration "
+        "aligned to your specific use-case and stakeholder priorities."
     ),
 }
+
+_DEFAULT_TEMPLATE = (
+    "Regarding {context}: our team has deep expertise in this area and can "
+    "provide a customised approach that aligns with your strategic objectives. "
+    "We look forward to exploring the specifics with you in detail."
+)
 
 
 # ---------------------------------------------------------------------------
@@ -104,76 +74,62 @@ _SECTION_TEMPLATES: dict[str, str] = {
 
 
 def analyze_screen_content(summary: str) -> dict:
-    """Analyse a plain-text description of screen content and return sales insights.
+    """Analyse a textual summary of screen content and return sales insights.
 
-    Classifies the situation by priority, identifies relevant findings, and
-    recommends concrete next steps the rep can take immediately.
+    Performs keyword-based analysis to surface relevant findings and
+    actionable recommendations for the sales representative.
 
     Args:
-        summary: Free-text description of what is visible on screen,
-                 e.g. "CRM showing 3 open opportunities — one at proposal stage,
-                 two in discovery. Competitor mentioned in notes for Acme deal."
+        summary: A plain-text description of what is currently visible on
+                 the screen, e.g. "CRM showing 3 open opportunities worth $120k".
 
     Returns::
 
         {
-            "findings": list[str],
+            "findings":        list[str],
             "recommendations": list[str],
-            "priority": "high" | "medium" | "low",
+            "priority":        "high" | "medium" | "low",
         }
     """
-    summary_lower = summary.lower()
+    lower = summary.lower()
+    tokens = set(re.split(r"[\s,./;:!?()-]+", lower))
 
-    # Determine priority — use word-boundary matching so multi-word phrases
-    # like "board" don't match inside "dashboard".
-    def _word_match(keyword: str, text: str) -> bool:
-        escaped = re.escape(keyword)
-        return bool(re.search(r'\b' + escaped + r'\b', text))
-
-    if any(_word_match(kw, summary_lower) for kw in _HIGH_PRIORITY_KEYWORDS):
-        priority = "high"
-    elif any(_word_match(kw, summary_lower) for kw in _LOW_PRIORITY_KEYWORDS):
+    # Determine priority via signal intersection.
+    if tokens & _HIGH_PRIORITY_SIGNALS:
+        priority: str = "high"
+    elif tokens & _LOW_PRIORITY_SIGNALS:
         priority = "low"
     else:
         priority = "medium"
 
-    # Extract findings from summary keywords
+    # Build findings.
     findings: list[str] = []
-    if "opportunity" in summary_lower or "opportunit" in summary_lower:
-        findings.append("Active sales opportunities detected in the pipeline.")
-    if "competitor" in summary_lower or "competitive" in summary_lower:
-        findings.append("Competitor presence noted — differentiation messaging required.")
-    if "proposal" in summary_lower:
-        findings.append("Deal is at proposal stage — pricing and ROI are top of mind.")
-    if "discovery" in summary_lower:
-        findings.append("Discovery-stage deals present — focus on pain identification.")
-    if "contract" in summary_lower or "procurement" in summary_lower:
-        findings.append("Contract or procurement phase detected — legal and compliance likely involved.")
-    if "renewal" in summary_lower or "expiring" in summary_lower:
-        findings.append("Renewal risk identified — act before competitor can enter.")
-    if "budget" in summary_lower:
-        findings.append("Budget signals visible — confirm approval authority and timeline.")
-    if "executive" in summary_lower or any(t in summary_lower for t in ("ceo", "cfo", "cto", "vp")):
-        findings.append("Executive-level stakeholder detected — tailor messaging to strategic outcomes.")
-    if not findings:
-        findings.append("Screen content noted — no specific opportunity signals flagged.")
 
-    # Build recommendations based on priority and findings
+    if any(kw in lower for kw in ("crm", "pipeline", "opportunity", "opportunit")):
+        findings.append("Active CRM pipeline data is visible — review open opportunity stages.")
+    if any(kw in lower for kw in ("email", "inbox", "message")):
+        findings.append("Unread communications detected — check for pending prospect replies.")
+    if any(kw in lower for kw in ("proposal", "quote", "contract", "pricing")):
+        findings.append("A proposal or contract document is open — confirm all figures are current.")
+    if any(kw in lower for kw in ("competitor", "compet", "alternative")):
+        findings.append("Competitive context present — prepare differentiation talking points.")
+    if any(kw in lower for kw in ("meeting", "call", "demo", "presentation")):
+        findings.append("Meeting or demo context identified — confirm agenda and attendee roles.")
+    if not findings:
+        findings.append("Screen content noted — no specific sales signals detected in the summary.")
+
+    # Build recommendations.
     recommendations: list[str] = []
+
     if priority == "high":
-        recommendations.append("Escalate engagement — reach out to the economic buyer directly.")
-        recommendations.append("Prepare a one-page executive summary focusing on ROI and risk reduction.")
-    if "Competitor" in " ".join(findings):
-        recommendations.append("Lead with a competitive battle card — highlight three unique differentiators.")
-    if "proposal" in summary_lower:
-        recommendations.append("Follow up on the proposal within 24 hours to address open questions.")
-    if "discovery" in summary_lower:
-        recommendations.append("Run a structured discovery call to confirm budget, authority, need, and timeline.")
-    if priority == "low":
-        recommendations.append("Nurture through content and light-touch follow-ups until intent signals emerge.")
-    if not recommendations:
-        recommendations.append("Continue relationship-building and surface deeper pain points in the next call.")
-        recommendations.append("Log key insights in CRM and schedule a follow-up touch point.")
+        recommendations.append("Prioritise this account immediately — high-value signals present.")
+        recommendations.append("Prepare a closing argument and address any outstanding objections.")
+    elif priority == "medium":
+        recommendations.append("Follow up within 24 hours to maintain deal momentum.")
+        recommendations.append("Send a brief recap email after the call to reinforce key points.")
+    else:
+        recommendations.append("Log this interaction in your CRM and set a nurture cadence.")
+        recommendations.append("Share relevant case studies to build awareness and interest.")
 
     return {
         "findings": findings,
@@ -183,52 +139,43 @@ def analyze_screen_content(summary: str) -> dict:
 
 
 def generate_proposal_section(section: str, context: str) -> str:
-    """Generate a tailored proposal section for a given business context.
+    """Generate a proposal section tailored to the given context.
+
+    Produces polished, professional copy for a named proposal section.
+    The section name is normalised (lowercased, spaces → underscores) before
+    matching against the built-in template library.
 
     Args:
-        section: The section to generate. Supported values:
-                 ``executive_summary``, ``problem_statement``,
-                 ``solution_overview``, ``value_proposition``,
-                 ``pricing``, ``next_steps``.
-                 Spaces are normalised to underscores automatically.
-        context: Brief description of the prospect, e.g.
-                 "SMB logistics company based in Milan with 120 employees".
+        section: Proposal section name, e.g. "executive_summary",
+                 "value_proposition", "next_steps", "pricing".
+        context: Free-text description of the prospect / deal, e.g.
+                 "SMB logistics company with 80 drivers".
 
     Returns:
-        A non-empty string of proposal copy for the requested section.
+        A multi-sentence string of proposal copy ready for use or editing.
     """
-    # Normalise section key
-    key = section.strip().lower().replace(" ", "_").replace("-", "_")
-    template = _SECTION_TEMPLATES.get(key)
-
-    if template:
-        return template.format(context=context.strip() or "your organisation")
-
-    # Graceful fallback for unknown sections
-    return (
-        f"[{section.replace('_', ' ').title()}] "
-        f"This section will be customised for {context.strip() or 'your organisation'} "
-        "following the discovery process. Please reach out to your account executive "
-        "for a tailored draft."
-    )
+    normalised = section.strip().lower().replace(" ", "_")
+    template = _PROPOSAL_TEMPLATES.get(normalised, _DEFAULT_TEMPLATE)
+    # Trim context to a reasonable length for inline use.
+    trimmed_context = context.strip()[:120] if context else "your organisation"
+    return template.format(context=trimmed_context)
 
 
 def log_talking_points(points: list[str]) -> str:
-    """Format and publish a structured list of talking points.
+    """Format a list of talking points for display and return a confirmation.
 
-    In a live agent context the agent wrapper publishes the payload to the
-    LiveKit ``tool-output`` data topic so the SalesPanel can render it.
-    This function returns a confirmation string and is kept side-effect-free
-    so it is easily unit-testable.
+    In the live agent context the containing agent method publishes this
+    output to the LiveKit ``tool-output`` data topic so the frontend
+    ``SalesPanel`` can render it as a prioritised bullet list.
 
     Args:
-        points: Ordered list of talking points for the current conversation.
+        points: Ordered list of talking-point strings, e.g.
+                ["Build rapport", "Ask about Q4 targets", "Present ROI slide"].
 
     Returns:
-        A confirmation string indicating the payload was published.
+        A short confirmation string confirming the points were sent.
     """
     if not points:
-        return "No talking points provided — nothing published."
-
-    formatted = "\n".join(f"{i + 1}. {pt.strip()}" for i, pt in enumerate(points))
-    return f"Talking points published ({len(points)} items):\n{formatted}"
+        return "No talking points provided — nothing sent."
+    formatted = "; ".join(f"{i + 1}. {p.strip()}" for i, p in enumerate(points))
+    return f"Talking points published to output panel: {formatted}"

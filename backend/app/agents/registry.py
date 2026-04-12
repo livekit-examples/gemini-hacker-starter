@@ -50,6 +50,7 @@ def _build_registry() -> dict[str, type[PersonaAgent]]:
         "hackathon": HackathonAgent,
         "comune": ComuneAgent,
         "sales": SalesAgent,
+        # Industry agents — implemented in later sessions:
         "manufacturing": DefaultAgent,
         "logistics": DefaultAgent,
         "real_estate": DefaultAgent,
