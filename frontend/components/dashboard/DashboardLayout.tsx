@@ -7,6 +7,7 @@ import { ToolOutputPanel } from './ToolOutputPanel';
 import { SessionControls } from './SessionControls';
 import { VoiceActivity } from './VoiceActivity';
 import { DemoGuidePanel, type DemoScenario } from './DemoGuidePanel';
+import { SalesPanel } from './panels/SalesPanel';
 import { ComunePanel } from './panels/ComunePanel';
 
 export interface LanguageInfo {
@@ -107,6 +108,11 @@ export function DashboardLayout({
       >
         {config.slug === 'comune' ? (
           <ComunePanel
+            className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
+            resetVersion={toolOutputResetVersion}
+          />
+        ) : config.slug === 'sales' ? (
+          <SalesPanel
             className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
             resetVersion={toolOutputResetVersion}
           />

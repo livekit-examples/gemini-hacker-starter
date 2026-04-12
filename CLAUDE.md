@@ -697,7 +697,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 15 — Sales: Frontend Panel  <!-- was Session 13 -->
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Scope:**
 - `components/dashboard/panels/SalesPanel.tsx` — renders talking points from `ToolOutputPanel` as a prioritised list; priority badge (red/amber/green `Tag`); bullet points in `font-sans text-sm text-ghost/70`
@@ -1115,7 +1115,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | **12** | **12** | **[x]** | **Comune: Backend ⬅ PRIORITY** | **Public Admin** | **ComuneAgent, 3 tools, 15 services, 12 applications** |
 | **13** | **13** | **[x]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [x] | Sales: Backend | Sales | SalesAgent, 3 tools |
-| 15 | 15 | [ ] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
+| 15 | 15 | [x] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
 | 16 | 16 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
 | 17 | 17 | [ ] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
 | 18 | 18 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
