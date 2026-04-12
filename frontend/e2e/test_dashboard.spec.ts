@@ -40,12 +40,12 @@ test.describe('Dashboard Layout', () => {
     expect(values).toContain('ar-AE');
   });
 
-  test('ToolOutputPanel renders a card when a tool-output DOM event is dispatched', async ({
+  test('SalesPanel renders a card when a tool-output DOM event is dispatched', async ({
     page,
   }) => {
-    // Verify panel is present and empty initially
-    await expect(page.getByTestId('tool-output-panel')).toBeVisible();
-    await expect(page.getByTestId('tool-output-card')).toHaveCount(0);
+    // Sales industry uses SalesPanel, not the generic ToolOutputPanel
+    await expect(page.getByTestId('sales-panel')).toBeVisible();
+    await expect(page.getByTestId('sales-talking-points-card')).toHaveCount(0);
 
     // Simulate a tool-output message via the test injection event
     await page.evaluate(() => {
@@ -56,8 +56,8 @@ test.describe('Dashboard Layout', () => {
       );
     });
 
-    // Card should appear
-    await expect(page.getByTestId('tool-output-card')).toHaveCount(1);
+    // Talking-points card should appear
+    await expect(page.getByTestId('sales-talking-points-card')).toHaveCount(1);
   });
 
   test('TranscriptPanel is visible', async ({ page }) => {

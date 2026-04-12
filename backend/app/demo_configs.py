@@ -126,6 +126,44 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
         accent="#4DA6FF",
         available=True,
         supported_languages=_ALL_LANGUAGES,
+        demo_scenarios=[
+            DemoScenario(
+                title="Competitive Deal — Protect Margin",
+                description="A rep is looking at a CRM record where a competitor has been mentioned and a discount is being requested.",
+                steps=[
+                    "I'm looking at the Hartmann Industries deal. Competitor is mentioned in the notes and they're asking for 20% off. What should I do?",
+                    "Can you give me the right talking points to push back on the discount without losing the deal?",
+                    "Help me write the executive summary section for Hartmann — they're a mid-size manufacturing firm in Stuttgart.",
+                ],
+            ),
+            DemoScenario(
+                title="Pipeline Review — Late-Stage Opportunities",
+                description="Sales manager reviewing three deals approaching quarter-end with unresolved blockers.",
+                steps=[
+                    "I'm looking at my pipeline. Three deals are at contract stage and the quarter closes in two weeks. What's the priority?",
+                    "The Belloni Group deal has the CFO involved now. Log these talking points: lead with ROI, confirm budget approval authority, propose a 30-day pilot.",
+                    "Can you generate the next steps section for Belloni's proposal? They're a logistics company in Milan.",
+                ],
+            ),
+            DemoScenario(
+                title="Discovery Call Prep",
+                description="Rep preparing for a first call with a new enterprise prospect.",
+                steps=[
+                    "I have a discovery call with Meridian Healthcare tomorrow. I can see their LinkedIn — 5,000 employees, recent news about digital transformation. What should I focus on?",
+                    "Generate a problem statement section for them. They're a large private hospital group.",
+                    "What are the three questions I absolutely must ask to qualify this deal?",
+                ],
+            ),
+            DemoScenario(
+                title="Stalled Deal — Re-Engagement",
+                description="A deal has gone dark after a strong proposal stage. Rep needs a strategy to re-engage.",
+                steps=[
+                    "The Ferreira Group went silent three weeks ago. We sent the proposal and got no response. What do I do?",
+                    "My CRM shows their contract renewal is in two months and they haven't signed anything yet. How urgent is this?",
+                    "Log these re-engagement talking points: acknowledge the silence, reference the renewal deadline, offer a quick 15-minute check-in.",
+                ],
+            ),
+        ],
     ),
     "manufacturing": DemoConfig(
         slug="manufacturing",
