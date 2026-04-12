@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     google_api_key: str = ""
     realtime_model: str = "gemini-2.5-flash-native-audio-latest"
     realtime_voice: str = "Aoede"
-    stt_model: str = "auto"
     agent_name: str = "gemini-hackathon-agent"
     default_language: str = "en"
     default_industry: str = "hackathon"
