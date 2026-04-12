@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     agent_name: str = "gemini-hackathon-agent"
     default_language: str = "en"
     default_industry: str = "hackathon"
+    silence_timeout_seconds: float = 45.0
+    silence_check_interval_seconds: float = 1.0
+    silence_audio_level_threshold: float = 0.02
 
 
 settings = Settings()
