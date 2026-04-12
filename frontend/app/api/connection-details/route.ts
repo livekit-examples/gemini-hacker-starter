@@ -9,7 +9,6 @@ type ConnectionDetails = {
   participantToken: string;
 };
 
-const ALLOWED_REALTIME_VOICES = new Set(['Aoede', 'Kore', 'Puck', 'Charon', 'Fenrir']);
 const FALLBACK_AGENT_NAME = 'gemini-hackathon-agent';
 
 // NOTE: you are expected to define the following environment variables in `.env.local`:
@@ -127,11 +126,7 @@ function parseString(value: unknown): string | undefined {
 }
 
 function parseRequestedVoice(value: unknown): string | undefined {
-  if (typeof value !== 'string') {
-    return undefined;
-  }
-
-  return ALLOWED_REALTIME_VOICES.has(value) ? value : undefined;
+  return parseString(value);
 }
 
 function createParticipantToken(

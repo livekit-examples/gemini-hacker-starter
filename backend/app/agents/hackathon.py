@@ -23,7 +23,16 @@ REALTIME_MODEL = os.getenv("REALTIME_MODEL", "gemini-2.5-flash-native-audio-late
 REALTIME_VOICE = os.getenv("REALTIME_VOICE", "Aoede")
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"
 LYRIA_MODEL = "models/lyria-realtime-exp"
-ALLOWED_REALTIME_VOICES = {"Aoede", "Kore", "Puck", "Charon", "Fenrir"}
+ALLOWED_REALTIME_VOICES = {
+    # Original 5
+    "Aoede", "Kore", "Puck", "Charon", "Fenrir",
+    # Gemini 2.5 extended set
+    "Zephyr", "Leda", "Orus", "Callirrhoe", "Autonoe",
+    "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina",
+    "Erinome", "Algenib", "Rasalghul", "Laomedeia", "Achernar",
+    "Alnilam", "Schedar", "Gacrux", "Pulcherrima", "Achird",
+    "Zubenelgenubi", "Vindemiatrix", "Sadachbia", "Sadaltager", "Sulafat",
+}
 
 PERSONA_INSTRUCTIONS = """You are a creative multimodal AI assistant at a Google DeepMind x YC hackathon.
 You can see through the user's camera, hear them speak, generate images, and play real-time music.

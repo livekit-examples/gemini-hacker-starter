@@ -14,12 +14,12 @@ class Settings(BaseSettings):
     google_api_key: str = ""
     realtime_model: str = "gemini-2.5-flash-native-audio-latest"
     realtime_voice: str = "Aoede"
+    realtime_voices: str = ""
     agent_name: str = "gemini-hackathon-agent"
     default_language: str = "en"
     default_industry: str = "hackathon"
     silence_timeout_seconds: float = 45.0
     silence_check_interval_seconds: float = 1.0
-    silence_audio_level_threshold: float = 0.02
 
 
 settings = Settings()

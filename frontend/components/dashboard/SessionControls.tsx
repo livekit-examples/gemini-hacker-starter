@@ -12,6 +12,9 @@ interface SessionControlsProps {
   onReset: () => void;
   selectedLanguage?: string;
   onLanguageChange?: (code: string) => void;
+  voiceOptions?: string[];
+  selectedVoice?: string;
+  onVoiceChange?: (voice: string) => void;
   microphones?: Array<{ deviceId: string; label: string }>;
   selectedMicrophoneId?: string;
   onMicrophoneChange?: (deviceId: string) => void;
@@ -26,11 +29,15 @@ export function SessionControls({
   onReset,
   selectedLanguage = 'en',
   onLanguageChange,
+  voiceOptions = [],
+  selectedVoice = 'Aoede',
+  onVoiceChange,
   microphones = [],
   selectedMicrophoneId,
   onMicrophoneChange,
   className,
 }: SessionControlsProps) {
+  const isConnected = connectionState === 'connected';
   return (
     <div
       data-testid="session-controls"
@@ -61,6 +68,29 @@ export function SessionControls({
           {languages.map((lang) => (
             <option key={lang.code} value={lang.code}>
               {lang.flag} {lang.display_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="voice-selector"
+          className="font-mono text-[10px] text-ghost/50 uppercase tracking-widest"
+        >
+          Voice {isConnected && <span className="text-ghost/30 normal-case tracking-normal">(reconnects)</span>}
+        </label>
+        <select
+          id="voice-selector"
+          data-testid="voice-selector"
+          value={selectedVoice}
+          onChange={(e) => onVoiceChange?.(e.target.value)}
+          className="w-full bg-[#05050A] border border-graphite rounded-[2rem] px-4 py-2.5 font-mono text-xs text-ghost/70 focus:outline-none focus:border-accent/50 cursor-pointer"
+          aria-label="Voice selector"
+        >
+          {voiceOptions.map((voice) => (
+            <option key={voice} value={voice}>
+              {voice}
             </option>
           ))}
         </select>

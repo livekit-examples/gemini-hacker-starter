@@ -8,11 +8,15 @@ import { AgentSessionProvider } from '@/components/agents-ui/agent-session-provi
 import { StartAudioButton } from '@/components/agents-ui/start-audio-button';
 import { DashboardLayout, type DemoConfig } from '@/components/dashboard/DashboardLayout';
 import { useAgentErrors } from '@/hooks/useAgentErrors';
+import { DEFAULT_GEMINI_VOICES } from '@/lib/voices';
 
 interface DemoDashboardProps {
   config: DemoConfig;
   selectedLanguage: string;
   onLanguageChange: (code: string) => void;
+  voiceOptions: string[];
+  selectedVoice: string;
+  onVoiceChange: (voice: string) => void;
 }
 
 interface MicrophoneInfo {
@@ -26,7 +30,7 @@ const LAST_MICROPHONE_STORAGE_KEY = 'exodia.voice.lastMicrophoneId';
  * Inner dashboard — must render inside AgentSessionProvider so LiveKit
  * hooks (useSessionContext, useRoomContext, useVoiceAssistant) are available.
  */
-function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: DemoDashboardProps) {
+function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange, voiceOptions, selectedVoice, onVoiceChange }: DemoDashboardProps) {
   const router = useRouter();
   const room = useRoomContext();
   const { isConnected, start, end } = useSessionContext();
@@ -166,6 +170,9 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
       connectionState={connectionState}
       selectedLanguage={selectedLanguage}
       onLanguageChange={onLanguageChange}
+      voiceOptions={voiceOptions}
+      selectedVoice={selectedVoice}
+      onVoiceChange={onVoiceChange}
       microphones={microphones}
       selectedMicrophoneId={selectedMicrophoneId}
       onMicrophoneChange={handleMicrophoneChange}
@@ -180,10 +187,49 @@ function InnerDemoDashboard({ config, selectedLanguage, onLanguageChange }: Demo
 interface DemoClientProps {
   config: DemoConfig;
   initialLanguage?: string;
+  initialVoice?: string;
 }
 
-export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) {
+export function DemoClient({ config, initialLanguage = 'en', initialVoice = 'Aoede' }: DemoClientProps) {
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
+  const [selectedVoice, setSelectedVoice] = useState(initialVoice);
+  const [voiceOptions, setVoiceOptions] = useState<string[]>([...DEFAULT_GEMINI_VOICES]);
+
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+    if (!backendUrl) {
+      return;
+    }
+
+    const fetchVoiceCatalog = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/voices`, { cache: 'no-store' });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as { voices?: unknown };
+        if (!Array.isArray(data.voices)) {
+          return;
+        }
+
+        const parsedVoices = data.voices
+          .filter((voice): voice is string => typeof voice === 'string' && voice.trim().length > 0)
+          .map((voice) => voice.trim());
+
+        if (parsedVoices.length === 0) {
+          return;
+        }
+
+        setVoiceOptions(parsedVoices);
+        setSelectedVoice((current) => (parsedVoices.includes(current) ? current : parsedVoices[0]));
+      } catch {
+        // Keep default voice options when catalog fetch fails.
+      }
+    };
+
+    void fetchVoiceCatalog();
+  }, []);
 
   const tokenSource = useMemo(() => {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
@@ -197,6 +243,7 @@ export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           language: selectedLanguage,
+          voice: selectedVoice,
           industry: config.slug,
           room_config: {
             agents: [{ agent_name: 'gemini-hackathon-agent' }],
@@ -206,7 +253,7 @@ export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) 
       if (!res.ok) throw new Error(`Connection details fetch failed: ${res.status}`);
       return res.json();
     });
-  }, [config.slug, selectedLanguage]);
+  }, [config.slug, selectedLanguage, selectedVoice]);
 
   const session = useSession(tokenSource);
 
@@ -217,6 +264,9 @@ export function DemoClient({ config, initialLanguage = 'en' }: DemoClientProps) 
         config={config}
         selectedLanguage={selectedLanguage}
         onLanguageChange={setSelectedLanguage}
+        voiceOptions={voiceOptions}
+        selectedVoice={selectedVoice}
+        onVoiceChange={setSelectedVoice}
       />
     </AgentSessionProvider>
   );

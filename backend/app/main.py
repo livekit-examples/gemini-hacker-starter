@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import app.agent_runner as agent_runner
-from app.routers import config, connection, demos, health
+from app.routers import config, connection, demos, health, voices
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,9 @@ async def lifespan(_: FastAPI):
         _task = await agent_runner.start_agent_server()
         logger.info("Agent server background task started")
     except Exception:
-        logger.exception("Failed to start agent server — API will continue without agent")
+        logger.exception(
+            "Failed to start agent server — API will continue without agent"
+        )
 
     yield
 
@@ -50,3 +52,4 @@ app.include_router(health.router)
 app.include_router(connection.router)
 app.include_router(config.router)
 app.include_router(demos.router)
+app.include_router(voices.router)

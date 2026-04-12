@@ -19,7 +19,6 @@ from livekit import agents
 from livekit.agents import AgentServer, AgentSession, TurnHandlingOptions
 from livekit.plugins import google as lk_google
 
-from app.agents.hackathon import ALLOWED_REALTIME_VOICES
 from app.agents.persona import PersonaAgent
 from app.agents.registry import get_agent
 from app.agent_settings import resolve_realtime_model
@@ -36,21 +35,6 @@ async def _call_maybe_async(fn: Callable[..., Any]) -> None:
     result = fn()
     if inspect.isawaitable(result):
         await result
-
-
-def _has_remote_speech_activity(room: Any, threshold: float) -> bool:
-    """Best-effort speech activity detection from room participant levels."""
-    active_speakers = getattr(room, "active_speakers", []) or []
-    for participant in active_speakers:
-        if float(getattr(participant, "audio_level", 0.0) or 0.0) >= threshold:
-            return True
-
-    remote_participants = getattr(room, "remote_participants", {}) or {}
-    for participant in remote_participants.values():
-        if float(getattr(participant, "audio_level", 0.0) or 0.0) >= threshold:
-            return True
-
-    return False
 
 
 _SILENCE_FAREWELL_PHRASES: dict[str, str] = {
@@ -72,7 +56,9 @@ def _current_language(agent: "PersonaAgent", fallback: str) -> str:
 
 async def _say_farewell(session: AgentSession, language_code: str) -> None:
     """Speak a short farewell before disconnecting due to silence."""
-    phrase = _SILENCE_FAREWELL_PHRASES.get(language_code) or _SILENCE_FAREWELL_PHRASES["en"]
+    phrase = (
+        _SILENCE_FAREWELL_PHRASES.get(language_code) or _SILENCE_FAREWELL_PHRASES["en"]
+    )
     say_fn = getattr(session, "say", None)
     if not callable(say_fn):
         return
@@ -87,7 +73,10 @@ async def _say_farewell(session: AgentSession, language_code: str) -> None:
 
 
 async def _shutdown_due_to_silence(
-    ctx: agents.JobContext, session: AgentSession, agent: "PersonaAgent", fallback_language: str = "en"
+    ctx: agents.JobContext,
+    session: AgentSession,
+    agent: "PersonaAgent",
+    fallback_language: str = "en",
 ) -> None:
     """Speak a farewell in the agent's current language, then shut down gracefully."""
     language_code = _current_language(agent, fallback_language)
@@ -116,7 +105,9 @@ async def _shutdown_due_to_silence(
                 exc,
             )
 
-    logger.warning("Silence timeout reached, but no supported shutdown method was found")
+    logger.warning(
+        "Silence timeout reached, but no supported shutdown method was found"
+    )
 
 
 async def _silence_watchdog(
@@ -130,31 +121,36 @@ async def _silence_watchdog(
         return
 
     check_interval_s = max(0.2, settings.silence_check_interval_seconds)
-    threshold = max(0.0, settings.silence_audio_level_threshold)
-    last_activity_at = time.monotonic()
+    last_speech: list[float] = [time.monotonic()]
+
+    def _mark_agent_speech(*_: Any) -> None:
+        last_speech[0] = time.monotonic()
+
+    session.on("agent_speech_committed", _mark_agent_speech)
 
     logger.info(
-        "Silence watchdog enabled (timeout=%.1fs, interval=%.1fs, threshold=%.3f)",
+        "Silence watchdog enabled (timeout=%.1fs, interval=%.1fs)",
         timeout_s,
         check_interval_s,
-        threshold,
     )
 
-    while True:
-        await asyncio.sleep(check_interval_s)
+    try:
+        while True:
+            await asyncio.sleep(check_interval_s)
 
-        if _has_remote_speech_activity(ctx.room, threshold):
-            last_activity_at = time.monotonic()
-            continue
-
-        idle_for = time.monotonic() - last_activity_at
-        if idle_for >= timeout_s:
-            logger.info(
-                "Silence timeout reached after %.1fs without user speech activity",
-                idle_for,
-            )
-            await _shutdown_due_to_silence(ctx, session, agent, fallback_language)
-            return
+            idle_for = time.monotonic() - last_speech[0]
+            if idle_for >= timeout_s:
+                logger.info(
+                    "Silence timeout: no agent speech for %.1fs",
+                    idle_for,
+                )
+                await _shutdown_due_to_silence(ctx, session, agent, fallback_language)
+                return
+    finally:
+        try:
+            session.off("agent_speech_committed", _mark_agent_speech)
+        except Exception:
+            pass
 
 
 def _build_agent_session(selected_model: str, selected_voice: str) -> AgentSession:
@@ -205,11 +201,8 @@ async def entrypoint(ctx: agents.JobContext):
                     selected_industry = requested_industry.strip()
 
                 requested_voice = parsed.get("realtimeVoice")
-                if (
-                    isinstance(requested_voice, str)
-                    and requested_voice in ALLOWED_REALTIME_VOICES
-                ):
-                    selected_voice = requested_voice
+                if isinstance(requested_voice, str) and requested_voice.strip():
+                    selected_voice = requested_voice.strip()
                     logger.info(
                         "Using requested realtime voice from participant metadata: %s",
                         selected_voice,

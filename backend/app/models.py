@@ -34,3 +34,7 @@ class DemosResponse(BaseModel):
 
 class DemoConfigResponse(DemoConfig):
     pass
+
+
+class VoicesResponse(BaseModel):
+    voices: list[str]
