@@ -2,10 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 1,
+  workers: 1,
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:3000',
@@ -23,10 +23,25 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      // Backend — serves /api/config, /api/demos, /api/health
+      command:
+        'cd ../backend && uv run uvicorn app.main:app --port 8001 --log-level warning',
+      url: 'http://localhost:8001/api/health',
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+      env: {
+        NEXT_PUBLIC_BACKEND_URL: 'http://localhost:8001',
+        BACKEND_URL: 'http://localhost:8001',
+      },
+    },
+    {
+      // Frontend
+      command: 'NEXT_PUBLIC_BACKEND_URL=http://localhost:8001 BACKEND_URL=http://localhost:8001 pnpm dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 });

@@ -31,7 +31,7 @@ export function PersonaCard({
       )}
     >
       <div className="flex items-center gap-4">
-        <Avatar initials={initials} size="lg" />
+        <Avatar initials={initials} size="lg" data-testid="persona-initials" />
         <div className="flex flex-col gap-1 min-w-0">
           <span
             data-testid="persona-name"
@@ -39,7 +39,10 @@ export function PersonaCard({
           >
             {name}
           </span>
-          <span className="font-mono text-[10px] text-ghost/50 uppercase tracking-wider truncate">
+          <span
+            data-testid="persona-role"
+            className="font-mono text-[10px] text-ghost/50 uppercase tracking-wider truncate"
+          >
             {role}
           </span>
         </div>
