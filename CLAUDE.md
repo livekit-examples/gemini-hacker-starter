@@ -719,7 +719,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 16 — Manufacturing: Agent + Tools + SOP Data  <!-- was Session 14 -->
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Persona:** Marco, Process & Quality Engineer. Methodical, precise, no-nonsense.
 
@@ -748,7 +748,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 17 — Manufacturing: Frontend Panel  <!-- was Session 15 -->
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Scope:**
 - `components/dashboard/panels/ManufacturingPanel.tsx` — defect report card: defect type header, severity badge (colour-coded Tag), recommended action; SOP result card: procedure title, numbered steps list
@@ -1117,8 +1117,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | **13** | **13** | **[x]** | **Comune: Frontend** | **Public Admin** | **ComunePanel, Giulia PersonaCard** |
 | 14 | 14 | [x] | Sales: Backend | Sales | SalesAgent, 3 tools |
 | 15 | 15 | [x] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
-| 16 | 16 | [ ] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
-| 17 | 17 | [ ] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
+| 16 | 16 | [x] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
+| 17 | 17 | [x] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
 | 18 | 18 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
 | 19 | 19 | [ ] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
 | 20 | 20 | [ ] | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |

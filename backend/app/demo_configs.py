@@ -176,8 +176,56 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
             "in seconds — cut rework and keep compliance airtight."
         ),
         accent="#4DA6FF",
-        available=False,
+        available=True,
         supported_languages=_ALL_LANGUAGES,
+        demo_scenarios=[
+            DemoScenario(
+                title="Weld Defect on Frame Sub-Assembly",
+                description="Inspector finds porosity in a weld bead during a quality walkthrough.",
+                steps=[
+                    "I'm inspecting a frame sub-assembly and I can see porosity in the weld bead near the cross-member. What kind of defect is this?",
+                    "How severe is weld porosity? Should we stop the line?",
+                    "Can you pull up the weld inspection SOP so I know the acceptance criteria?",
+                    "Generate a defect report for the weld porosity I found on this part.",
+                ],
+            ),
+            DemoScenario(
+                title="Lockout/Tagout Before CNC Maintenance",
+                description="Maintenance technician needs to perform LOTO before servicing the CNC milling machine.",
+                steps=[
+                    "I need to service the CNC milling machine LM-400. What's the lockout tagout procedure?",
+                    "What happens if I skip the step to verify zero energy state?",
+                    "The machine has a spindle overload error E-14. How do I troubleshoot that before the LOTO?",
+                ],
+            ),
+            DemoScenario(
+                title="Critical Crack on Load-Bearing Bracket",
+                description="A hairline crack is spotted on a structural component — worst-case defect scenario.",
+                steps=[
+                    "There's a hairline crack on the left load-bearing bracket. How do I classify this?",
+                    "This is a critical defect. What are the immediate steps I need to take?",
+                    "Can you generate a defect report so I can attach it to the NCR?",
+                ],
+            ),
+            DemoScenario(
+                title="Torque Spec for Gearbox Cover Assembly",
+                description="An operator is assembling a gearbox and needs the correct torque sequence for M12 bolts.",
+                steps=[
+                    "What's the torque specification for M12 bolts on a gearbox cover?",
+                    "Should I use a thread-locking compound? And in what order do I tighten the bolts?",
+                    "After torquing, how long do I wait before pressure-testing?",
+                ],
+            ),
+            DemoScenario(
+                title="Paint Defect on Class A Panel",
+                description="An orange peel texture is found on an exterior panel — minor defect edge case.",
+                steps=[
+                    "I found an orange peel texture on a painted exterior panel. Is this a major or minor defect?",
+                    "What's the SOP for doing a spot repair on a paint defect?",
+                    "The DOI reading on our BYK scanner is 82. Should the panel be rejected?",
+                ],
+            ),
+        ],
     ),
     "logistics": DemoConfig(
         slug="logistics",

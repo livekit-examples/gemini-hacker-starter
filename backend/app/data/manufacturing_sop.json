@@ -1,0 +1,300 @@
+[
+  {
+    "procedure_id": "SOP-MFG-001",
+    "title": "Torque Specification — M8 Bolts on Assembly Jig A3",
+    "keywords": ["torque", "m8", "bolt", "jig", "assembly", "tightening"],
+    "steps": [
+      "Ensure the bolt threads are clean and free of debris before torquing.",
+      "Select a calibrated torque wrench rated for the target range (20–25 Nm).",
+      "Apply a thin layer of anti-seize compound to the bolt threads.",
+      "Hand-tighten the bolt until snug, confirming the washer is seated.",
+      "Set the torque wrench to 22 Nm and apply torque in a smooth, continuous motion.",
+      "Mark the bolt head with a paint marker to confirm torque completion.",
+      "Record the torque value and operator ID in the assembly checklist (Form MFG-A3-012)."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-002",
+    "title": "Lockout/Tagout (LOTO) — CNC Milling Machine LM-400",
+    "keywords": ["lockout", "tagout", "loto", "cnc", "milling", "energy isolation", "lm-400"],
+    "steps": [
+      "Notify all affected employees before initiating LOTO on LM-400.",
+      "Power down the machine using the main control panel — confirm display goes dark.",
+      "Turn the main disconnect switch to the OFF position at the electrical panel.",
+      "Apply your personal lock to the hasp on the disconnect — only you hold the key.",
+      "Attach a LOTO tag with your name, employee ID, date, and reason for lockout.",
+      "Release stored energy: bleed any residual pneumatic pressure via the relief valve.",
+      "Attempt to restart the machine from the control panel to verify zero energy state.",
+      "Proceed with maintenance only after zero energy is confirmed."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-003",
+    "title": "Visual Inspection Criteria — Weld Quality on Frame Sub-Assembly",
+    "keywords": ["weld", "visual inspection", "frame", "sub-assembly", "quality", "defect"],
+    "steps": [
+      "Allow weld to cool to ambient temperature before inspection.",
+      "Use a 5× magnifying glass and adequate lighting (min 500 lux) at the inspection station.",
+      "Check for surface porosity — any pore diameter > 1.5 mm is a rejection criterion.",
+      "Inspect for undercut along the weld toe — depth > 0.5 mm requires rework.",
+      "Measure weld leg length with a weld gauge — minimum 6 mm on all fillet welds.",
+      "Check for cracks, spatters > 3 mm, and overlap defects at start/stop points.",
+      "Mark non-conforming welds with red chalk and tag the part with a red NCR tag.",
+      "Complete Weld Inspection Form QA-WLD-07 and forward to the Quality Engineer."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-004",
+    "title": "Machine Error Code Response — Error E-14 (Spindle Overload)",
+    "keywords": ["error", "e-14", "spindle", "overload", "machine error", "alarm", "fault"],
+    "steps": [
+      "Do not attempt to clear E-14 without investigating root cause first.",
+      "Press the FEED HOLD button immediately to stop axis movement safely.",
+      "Record the active alarm code and current spindle load percentage from the HMI.",
+      "Check the cutting tool for wear or breakage — replace if flute damage is visible.",
+      "Verify the programmed feed rate and spindle speed against the approved NC program.",
+      "Reduce feed-rate override to 70% and attempt a trial cut on scrap material.",
+      "If overload recurs, inspect the spindle motor cooling fan for blockage.",
+      "If the fault persists after corrective action, raise a Work Order for maintenance."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-005",
+    "title": "PPE Requirements — Plasma Cutting Operations",
+    "keywords": ["ppe", "personal protective equipment", "plasma", "cutting", "safety gear"],
+    "steps": [
+      "Wear a welding helmet with shade 5 or higher filter lens for plasma arc exposure.",
+      "Don flame-resistant (FR) overalls rated to EN ISO 11611 — no synthetic fibres.",
+      "Use leather welding gloves — minimum 30 cm cuff length to protect forearms.",
+      "Wear steel-toe leather safety boots with metatarsal protection.",
+      "Ensure respiratory protection (FFP2 minimum) is worn when cutting galvanised steel.",
+      "Use hearing protection (SNR ≥ 25 dB) if ambient noise exceeds 85 dB(A).",
+      "Confirm a Class D fire extinguisher is within reach before starting the operation.",
+      "Inspect all PPE for damage before use; damaged items must not be worn."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-006",
+    "title": "Torque Specification — M12 Bolts on Gearbox Cover",
+    "keywords": ["torque", "m12", "gearbox", "cover", "bolt", "fastener"],
+    "steps": [
+      "Degrease mating surfaces with isopropyl alcohol and allow to fully dry.",
+      "Apply a thread-locking compound (Loctite 243) to the M12 bolt threads.",
+      "Hand-start all bolts in the gearbox cover before applying any torque.",
+      "Follow a cross-pattern tightening sequence to ensure even gasket compression.",
+      "Torque to 40 Nm in two passes: first 20 Nm, then final 40 Nm.",
+      "Allow thread-locking compound to cure for 30 minutes before pressure testing.",
+      "Log torque values, operator ID, and curing start time on the Gearbox Assembly Record."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-007",
+    "title": "Visual Inspection Criteria — Surface Finish on Machined Aluminium Parts",
+    "keywords": ["surface finish", "machined", "aluminium", "inspection", "roughness", "Ra", "burr"],
+    "steps": [
+      "Clean the part with compressed air and a lint-free cloth before inspection.",
+      "Measure surface roughness with a calibrated profilometer — reject if Ra > 1.6 µm on sealing faces.",
+      "Inspect for burrs at all drilled holes and machined edges using a 10× loupe.",
+      "Deburr any burr height > 0.1 mm using a deburring tool before re-inspection.",
+      "Check dimensional tolerances against the drawing for critical features.",
+      "Inspect for tool marks, chatter marks, or gouges — any visible chatter is a re-machine trigger.",
+      "Record pass/fail status on the In-Process Inspection Record (QA-MFG-IP-04)."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-008",
+    "title": "Machine Error Code Response — Error E-07 (Axis Servo Fault)",
+    "keywords": ["error", "e-07", "servo", "axis", "fault", "drive", "alarm"],
+    "steps": [
+      "Immediately initiate an E-stop to prevent any further uncontrolled axis movement.",
+      "Note which axis (X, Y, or Z) triggered the servo fault from the alarm log.",
+      "Power cycle the machine controller after waiting 60 seconds for capacitors to discharge.",
+      "If the fault clears on restart, perform a slow jog on the affected axis to check smooth movement.",
+      "Inspect the servo drive LED status codes — red solid indicates hardware failure.",
+      "Check cable connections at the servo drive and the axis motor terminal box.",
+      "If the fault persists, contact the OEM service line and log in the Maintenance Register."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-009",
+    "title": "Defect Classification — Injection-Moulded Plastic Parts",
+    "keywords": ["injection moulding", "plastic", "defect", "classification", "sink mark", "flash", "weld line"],
+    "steps": [
+      "Inspect the part under 500 lux uniform lighting against a neutral grey background.",
+      "Identify sink marks: depressions visible as shadows on A-surfaces are critical defects.",
+      "Check for flash along parting lines — flash > 0.5 mm extending into a functional zone is a reject.",
+      "Inspect weld lines on visible surfaces — any weld line breaking the surface colour uniformity is a reject.",
+      "Measure short-shot depth with a depth gauge — any short > 0.3 mm is an immediate reject.",
+      "Identify burn marks (dark discolouration at gate or end-of-fill areas) — always reject.",
+      "Record each defect type, location, and quantity on the Injection Moulding NCR Form (QA-IM-03).",
+      "Segregate rejected parts in a red-labelled quarantine bin."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-010",
+    "title": "Lockout/Tagout — Hydraulic Press HP-200",
+    "keywords": ["lockout", "tagout", "loto", "hydraulic", "press", "hp-200", "energy"],
+    "steps": [
+      "Inform the press operator and adjacent workstation operators before applying LOTO.",
+      "Lower the ram to the bottom dead-centre position to minimise stored energy.",
+      "Shut off the hydraulic power unit and wait for the pressure gauge to read zero.",
+      "Isolate the electrical supply at the MCC panel and apply a personal lock.",
+      "Bleed residual hydraulic pressure via the manual pressure-relief valve.",
+      "Block the ram mechanically using the approved safety block before working under it.",
+      "Verify zero energy state: attempt to initiate a press cycle from the pendant — nothing should move.",
+      "Attach a LOTO tag with name, date, and reason, visible from the operator position."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-011",
+    "title": "Torque Specification — Cylinder Head Bolts (Engine Sub-Assembly)",
+    "keywords": ["torque", "cylinder head", "engine", "head bolt", "sequence", "yield"],
+    "steps": [
+      "Verify that all mating surfaces are clean and the head gasket is correctly oriented.",
+      "Lubricate bolt threads and washer faces with fresh engine oil — do not reuse old bolts.",
+      "Install bolts finger-tight in the manufacturer's specified sequence.",
+      "Apply first torque pass: 30 Nm in sequence.",
+      "Apply second torque pass: 60 Nm in sequence.",
+      "Apply third torque pass: 90 Nm in sequence.",
+      "Apply final angular torque: +90° rotation per bolt in sequence using an angle gauge.",
+      "Mark all bolt heads with a stripe using a paint marker to confirm completion.",
+      "Record all torque values and lot numbers in the Engine Build Record."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-012",
+    "title": "PPE Requirements — Chemical Cleaning Station",
+    "keywords": ["ppe", "chemical", "cleaning", "solvent", "safety", "gloves", "respirator"],
+    "steps": [
+      "Review the Safety Data Sheet (SDS) for the specific cleaning agent before starting.",
+      "Wear nitrile chemical-resistant gloves rated to EN 374 — minimum 0.4 mm thickness.",
+      "Don a full-face shield (not safety glasses) when handling solvents above 100 ml.",
+      "Wear an organic vapour respirator (EN 14387 A1) in enclosed or poorly ventilated spaces.",
+      "Use a rubber apron over FR overalls to protect against splashes.",
+      "Ensure eyewash station is within 10 seconds' reach before beginning any chemical work.",
+      "Never eat, drink, or touch your face while working with chemical cleaning agents.",
+      "Dispose of contaminated cleaning cloths in the designated yellow chemical-waste bin."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-013",
+    "title": "Machine Error Code Response — Error E-22 (Coolant Pressure Low)",
+    "keywords": ["error", "e-22", "coolant", "pressure", "low", "machine", "alarm", "fault"],
+    "steps": [
+      "Stop the current machining operation and set the spindle to zero rpm.",
+      "Check the coolant tank level — minimum level is marked at the 10-litre line.",
+      "If tank is low, top up with approved water-soluble coolant to the 15-litre mark.",
+      "Inspect the coolant pump filter for swarf blockage — clean with a plastic brush.",
+      "Check the coolant delivery hose for kinks or disconnections at the nozzle.",
+      "Verify coolant pressure at the pressure gauge after pump restart — target 3.5–4.5 bar.",
+      "If pressure remains low after all checks, contact maintenance to inspect the pump impeller.",
+      "Log the event and corrective action in the Machine Maintenance Log (Form MNT-CNC-01)."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-014",
+    "title": "Visual Inspection — Painted Exterior Panels (Class A Surface)",
+    "keywords": ["paint", "class a", "panel", "surface", "visual inspection", "defect", "orange peel", "runs"],
+    "steps": [
+      "Inspect the panel under a 60-degree incidence light source in a dedicated paint-inspection booth.",
+      "Check for orange peel texture — use a BYK Wave-Scan instrument; DOI < 85 is a reject.",
+      "Inspect for runs or sags — any run thicker than 0.3 mm in a visible zone is a reject.",
+      "Check for dirt inclusions using a 5× loupe — inclusions > 0.5 mm are a reject.",
+      "Look for colour mismatch against the approved master panel at normal viewing distance (1 m).",
+      "Measure film thickness with a dry-film gauge — specified range 90–130 µm.",
+      "Any defect on a Class A (visible) surface triggers an immediate repair-or-reject decision.",
+      "Document findings on the Paint Inspection Report and attach to the job traveller."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-015",
+    "title": "Defect Classification — Electrical PCB Visual Inspection",
+    "keywords": ["pcb", "printed circuit board", "solder", "inspection", "defect", "cold joint", "bridge"],
+    "steps": [
+      "Inspect the PCB under 10× magnification with oblique lighting to highlight solder surfaces.",
+      "Identify cold solder joints: dull, grainy, or rough surfaces indicate inadequate reflow.",
+      "Check for solder bridges between adjacent pads — any bridge is an immediate reject.",
+      "Inspect component orientation against the Bill of Materials and assembly drawing.",
+      "Verify all through-hole components are fully seated — 0.5 mm gap between body and board is acceptable max.",
+      "Check pad lifting or delamination with a 0.1 mm feeler gauge at suspect areas.",
+      "Identify missing components by comparing to the BOM line-by-line.",
+      "Log all defects on the PCB Inspection Record and route non-conforming boards to rework."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-016",
+    "title": "Conveyor Belt Safety Inspection — Weekly Check",
+    "keywords": ["conveyor", "belt", "inspection", "weekly", "safety", "tension", "alignment"],
+    "steps": [
+      "Isolate the conveyor under LOTO before any physical inspection of moving parts.",
+      "Visually inspect the belt surface for cuts, fraying, or delamination — 50 mm belt width loss is a replacement trigger.",
+      "Check belt tracking — belt edge must not contact the frame; adjust tracking rollers if drift exceeds 10 mm.",
+      "Measure belt tension with a tension meter — refer to belt specification sheet for target tension.",
+      "Inspect all idler rollers for bearing noise and smooth rotation by hand.",
+      "Check drive pulley lagging for wear — worn lagging exceeding 30% of surface area must be replaced.",
+      "Inspect emergency pull-cord switches along the conveyor length — verify each actuates an E-stop.",
+      "Complete the Weekly Conveyor Inspection Checklist (SAFE-CONV-WK) and submit to the Safety Officer."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-017",
+    "title": "Dimensional Inspection — First Article Inspection (FAI) Protocol",
+    "keywords": ["first article", "FAI", "dimensional", "inspection", "CMM", "blueprint", "tolerance"],
+    "steps": [
+      "Confirm part number and revision match the approved drawing before measuring.",
+      "Conduct all dimensional measurements on a temperature-stabilised CMM at 20 ± 2 °C.",
+      "Measure all critical dimensions (annotated 'K' on the drawing) first.",
+      "Record each measurement against the nominal value and tolerance band in the FAI report.",
+      "Any out-of-tolerance critical dimension stops production — do not continue to secondary operations.",
+      "Measure GD&T features using the appropriate datum structure as defined on the drawing.",
+      "Photograph any non-conforming feature and attach to the FAI report.",
+      "Submit the completed FAI package to Quality Assurance for sign-off before series production release."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-018",
+    "title": "Forklift Pre-Use Inspection Checklist",
+    "keywords": ["forklift", "inspection", "pre-use", "daily check", "safety", "battery", "forks"],
+    "steps": [
+      "Check the operator licence card is present and valid before use.",
+      "Inspect the fork tines for cracks, bends, or wear — blade thickness reduction > 10% is a withdrawal criterion.",
+      "Check tyre condition and inflation pressure (pneumatic) or wear (solid); bald tyres must not be used.",
+      "Test all lights: head, tail, and strobe must be operational.",
+      "Test the horn — audible from 5 m minimum.",
+      "Check hydraulic fluid level in the reservoir; top up with approved fluid if below the MIN mark.",
+      "Test lift and tilt functions through full range under no load.",
+      "Confirm the battery charge level (electric) or fuel level (propane/diesel) is adequate for the shift.",
+      "Record the inspection results on the Forklift Daily Pre-Use Checklist (LOG-FLT-01)."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-019",
+    "title": "Rework Procedure — Paint Defect Spot Repair",
+    "keywords": ["rework", "paint", "spot repair", "defect", "touch up", "blend"],
+    "steps": [
+      "Identify and mark the defect boundaries with a wax pencil — include a 50 mm feathering zone.",
+      "Sand the defect area with P400 wet-and-dry paper, then P800, keeping the surface wet.",
+      "Blow dry with compressed air and solvent wipe the repair zone with a tack cloth.",
+      "Apply a primer coat and allow to flash off for 15 minutes at 20 °C.",
+      "Apply the topcoat in two medium-wet coats with a 5-minute flash-off between coats.",
+      "Bake the repair at 60 °C for 30 minutes in the touch-up oven.",
+      "After cooling, wet-sand with P1500 paper, then machine-polish with a DA polisher.",
+      "Inspect the repaired area against the master panel in the inspection booth before approving."
+    ]
+  },
+  {
+    "procedure_id": "SOP-MFG-020",
+    "title": "PPE Requirements — Grinding and Deburring Operations",
+    "keywords": ["ppe", "grinding", "deburring", "angle grinder", "safety", "eye protection", "face shield"],
+    "steps": [
+      "Wear a full-face shield over safety glasses — sparks and fragments can travel up to 3 m.",
+      "Use cut-resistant gloves rated EN 388 level 4 — leather welding gloves are also acceptable.",
+      "Don FR coveralls — no exposed cotton or synthetic clothing.",
+      "Wear hearing protection (SNR ≥ 27 dB) — bench grinders exceed 100 dB(A) at operator position.",
+      "Ensure steel-toe and steel-midsole safety boots are worn.",
+      "Inspect the grinding disc before fitting — any crack, chip, or damage means discard and replace.",
+      "Check wheel guard is in place and positioned correctly before starting the grinder.",
+      "Never grind in the direction of other personnel; ensure a 3 m exclusion zone is maintained."
+    ]
+  }
+]

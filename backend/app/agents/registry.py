@@ -45,13 +45,14 @@ def _build_registry() -> dict[str, type[PersonaAgent]]:
     from app.agents.hackathon import HackathonAgent
     from app.agents.comune import ComuneAgent
     from app.agents.sales import SalesAgent
+    from app.agents.manufacturing import ManufacturingAgent
 
     return {
         "hackathon": HackathonAgent,
         "comune": ComuneAgent,
         "sales": SalesAgent,
+        "manufacturing": ManufacturingAgent,
         # Industry agents — implemented in later sessions:
-        "manufacturing": DefaultAgent,
         "logistics": DefaultAgent,
         "real_estate": DefaultAgent,
         "dental": DefaultAgent,
