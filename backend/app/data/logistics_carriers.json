@@ -1,0 +1,52 @@
+[
+  {
+    "carrier_name": "Emirates SkyCargo",
+    "on_time_rate_pct": 91.4,
+    "avg_delay_days": 0.8,
+    "open_incidents": 2,
+    "active_routes": ["UAE-Asia", "UAE-Europe", "UAE-Africa"],
+    "hub": "Dubai International Airport",
+    "specialisations": ["temperature-sensitive cargo", "perishables", "e-commerce"],
+    "recommendation": "Preferred carrier for UAE-origin air freight. Strong performance on temperature-controlled lanes. Minor customs coordination delays recorded on African routes — allow 1-day buffer."
+  },
+  {
+    "carrier_name": "DHL Freight",
+    "on_time_rate_pct": 87.2,
+    "avg_delay_days": 1.4,
+    "open_incidents": 5,
+    "active_routes": ["Europe-Asia", "Intra-Europe", "Europe-Middle East"],
+    "hub": "Leipzig, Germany",
+    "specialisations": ["industrial goods", "automotive", "hazardous materials"],
+    "recommendation": "Reliable for intra-European road freight. Current Q1 delays linked to driver shortage on Southern European corridors. Escalate SHP-20240315-MXP and SHP-20240320-LIN for priority re-routing."
+  },
+  {
+    "carrier_name": "Agility Logistics",
+    "on_time_rate_pct": 83.6,
+    "avg_delay_days": 2.1,
+    "open_incidents": 8,
+    "active_routes": ["Middle East-South Asia", "Middle East-Africa", "Intra-GCC"],
+    "hub": "Kuwait City, Kuwait",
+    "specialisations": ["project cargo", "government contracts", "oil and gas"],
+    "recommendation": "Strong regional network across GCC and South Asia. Above-average delay rate this quarter due to increased customs scrutiny on textile imports. Advise certificate of origin pre-clearance for all Agility bookings into UAE."
+  },
+  {
+    "carrier_name": "FedEx International",
+    "on_time_rate_pct": 94.1,
+    "avg_delay_days": 0.5,
+    "open_incidents": 1,
+    "active_routes": ["USA-Europe", "USA-Middle East", "Global Express"],
+    "hub": "Memphis, USA",
+    "specialisations": ["express documents", "high-value goods", "medical devices"],
+    "recommendation": "Top performer for transatlantic and USA-Middle East lanes. Best-in-class track-and-trace and on-time record. Recommended for high-value, time-critical shipments. Premium pricing — confirm with client before booking."
+  },
+  {
+    "carrier_name": "Air Arabia Cargo",
+    "on_time_rate_pct": 79.8,
+    "avg_delay_days": 2.9,
+    "open_incidents": 11,
+    "active_routes": ["UAE-South Asia", "UAE-North Africa", "Intra-Middle East"],
+    "hub": "Sharjah International Airport",
+    "specialisations": ["general cargo", "garments", "FMCG"],
+    "recommendation": "Cost-competitive option for South Asia and North Africa routes. Elevated incident count this quarter driven by Dhaka and Karachi port congestion — not carrier-attributable. Plan for 3-day buffer on all Sharjah-origin bookings until congestion clears."
+  }
+]

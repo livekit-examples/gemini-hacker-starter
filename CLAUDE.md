@@ -767,7 +767,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 18 — Logistics: Agent + Tools + Seeded Data  <!-- was Session 16 -->
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Persona:** Elena, Head of Logistics Operations. Sharp, fast, operationally focused.
 
@@ -791,7 +791,7 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 
 ### SESSION 19 — Logistics: Frontend Panel  <!-- was Session 17 -->
 
-**Status:** `[ ] Not started`
+**Status:** `[x] Complete`
 
 **Scope:**
 - `components/dashboard/panels/LogisticsPanel.tsx` — shipment card: tracking ID in `font-mono`, status badge, ETA; delay flag card: warning icon, reason, timestamp; carrier brief card: on-time rate, incidents count
@@ -1119,8 +1119,8 @@ Each industry is two sessions: **backend** (agent + tools + data) then **fronten
 | 15 | 15 | [x] | Sales: Frontend | Sales | SalesPanel, Aria PersonaCard |
 | 16 | 16 | [x] | Manufacturing: Backend | Manufacturing | ManufacturingAgent, SOP data (20 entries) |
 | 17 | 17 | [x] | Manufacturing: Frontend | Manufacturing | DefectPanel, Marco PersonaCard |
-| 18 | 18 | [ ] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
-| 19 | 19 | [ ] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
+| 18 | 18 | [x] | Logistics: Backend | Logistics | LogisticsAgent, 15 shipments, 5 carriers |
+| 19 | 19 | [x] | Logistics: Frontend | Logistics | LogisticsPanel, Elena PersonaCard |
 | 20 | 20 | [ ] | Real Estate: Backend | Real Estate | RealEstateAgent, listings + market data |
 | 21 | 21 | [ ] | Real Estate: Frontend | Real Estate | CMApanel, Sofia PersonaCard |
 | 22 | 22 | [ ] | Dental: Backend | Dental | DentalAgent, multilingual aftercare, disclaimer |

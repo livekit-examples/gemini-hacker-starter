@@ -10,6 +10,7 @@ import { DemoGuidePanel, type DemoScenario } from './DemoGuidePanel';
 import { SalesPanel } from './panels/SalesPanel';
 import { ComunePanel } from './panels/ComunePanel';
 import { ManufacturingPanel } from './panels/ManufacturingPanel';
+import { LogisticsPanel } from './panels/LogisticsPanel';
 
 export interface LanguageInfo {
   code: string;
@@ -125,6 +126,11 @@ export function DashboardLayout({
           />
         ) : config.slug === 'manufacturing' ? (
           <ManufacturingPanel
+            className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
+            resetVersion={toolOutputResetVersion}
+          />
+        ) : config.slug === 'logistics' ? (
+          <LogisticsPanel
             className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none"
             resetVersion={toolOutputResetVersion}
           />

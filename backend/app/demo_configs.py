@@ -238,8 +238,55 @@ DEMO_CONFIGS: dict[str, DemoConfig] = {
             "time — keep your supply chain moving with zero blind spots."
         ),
         accent="#4DA6FF",
-        available=False,
+        available=True,
         supported_languages=_ALL_LANGUAGES,
+        demo_scenarios=[
+            DemoScenario(
+                title="Delayed Shipment — Customs Hold in Abu Dhabi",
+                description="A high-value textile shipment is stuck at UAE customs with no ETA update.",
+                steps=[
+                    "I need a status update on shipment SHP-20240310-AUH. What's happening?",
+                    "It's been 5 days — can you flag it as delayed and note the certificate of origin issue?",
+                    "Who's the carrier on this and what's their on-time rate for UAE routes?",
+                ],
+            ),
+            DemoScenario(
+                title="Carrier Performance Review — Air Arabia",
+                description="Operations manager reviewing carrier reliability before Q2 bookings.",
+                steps=[
+                    "Give me a performance brief on Air Arabia Cargo.",
+                    "11 open incidents sounds high — should we look for an alternative carrier for the Dhaka routes?",
+                    "What about FedEx for the same South Asia to UAE corridor? How do they compare?",
+                ],
+            ),
+            DemoScenario(
+                title="Proactive Delay Escalation — DHL Truck Breakdown",
+                description="A truck breakdown is threatening an SLA on a wine and spirits shipment to Milan.",
+                steps=[
+                    "What's the status of SHP-20240320-LIN?",
+                    "A 2-day delay on wine and spirits going to Milan is going to breach our SLA. Flag it now.",
+                    "Is there any other DHL freight in transit that might be affected by the same driver shortage?",
+                ],
+            ),
+            DemoScenario(
+                title="Multi-Shipment Morning Briefing",
+                description="Logistics manager reviewing overnight updates across the active shipment portfolio.",
+                steps=[
+                    "Can you pull up SHP-20240315-MXP? That's the Milan machinery shipment.",
+                    "Also check SHP-20240318-FJR — that's the construction materials vessel.",
+                    "Which of our active shipments is currently at the highest risk of missing its ETA?",
+                ],
+            ),
+            DemoScenario(
+                title="Unknown Tracking ID — Edge Case",
+                description="An operator pastes an incorrect or expired tracking ID to test system behaviour.",
+                steps=[
+                    "Can you track this shipment: SHP-FAKE-99999?",
+                    "That tracking ID came from an old email — how do I find the correct one?",
+                    "What carriers do we usually use for shipments from Karachi to the UAE?",
+                ],
+            ),
+        ],
     ),
     "real_estate": DemoConfig(
         slug="real_estate",
