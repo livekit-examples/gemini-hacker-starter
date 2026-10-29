@@ -1,3 +1,6 @@
+> [!WARNING]
+> This example is archived and no longer maintained. For current examples, see [LiveKit Agents examples](https://github.com/livekit/agents/tree/main/examples) and [agent-starter-react](https://github.com/livekit-examples/agent-starter-react).
+
 # Gemini Hacker Starter
 
 A minimal starting point for building with **Gemini 3.1**, **NanoBanana 2**, and **Lyria RealTime** on LiveKit. Get a working multimodal agent running in under 10 minutes, then make it your own.
